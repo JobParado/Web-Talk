@@ -1,6 +1,6 @@
 import { supabaseClient } from "../config/supabaseClient.js";
 
-const HOME_PAGE_URL = "../public/homePage.html";
+const HOME_PAGE_URL = "./homePage.html";
 
 async function redirectIfAlreadyLoggedIn() {
   const { data } = await supabaseClient.auth.getSession();

@@ -1,7 +1,7 @@
 import { supabaseClient } from "./config/supabaseClient.js";
 import { fetchUsers } from "./fetchData/fetchUsers.js";
 
-const LOGIN_PAGE_URL = "../index.html";
+const LOGIN_PAGE_URL = "./index.html";
 
 let currentUuid = null;
 let currentChatUuid = null;
