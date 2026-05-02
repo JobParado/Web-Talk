@@ -32,11 +32,11 @@ btnRegister.addEventListener("click", async function (event) {
 
     if (!data.session) {
         alert("Account created. Please confirm your email before logging in.");
-        window.location.href = "./index.html";
+        window.location.href = "/index.html";
         return;
     }
 
 
     alert("Signup successful.");
-    window.location.href = "./index.html";
+    window.location.href = "/public/homePage.html";
 });
