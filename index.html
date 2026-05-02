@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Account Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/LoginCreate.css">
+    <script type="module" src="../src/account/loginEmail.js"></script>
+    <script type="module" src="../src/account/loginGoogle.js"></script>
+</head>
+
+<body>
+    <header>
+        <h2>Welcome to WebTalk!</h2>
+
+    </header>
+
+    <div class="parent">
+        <div class="content">
+            <h2 style="text-align: center;">Login Your Account</h2>
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: start; margin-bottom: 10px;">
+                <input type="checkbox" class="checkbox" onclick="togglePassword()">
+                <label for="showPassword">Show Password</label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit" id="btn-login-email">Login my account</button>
+
+
+            <button type="button" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px; " id="btn-login-google">Login / Signup with google instead</button>
+
+            <p>Dont Have An Account? <a href="../public/create.html" class="anchor-link">Sign Up</a></p>
+
+        </div>
+    </div>
+
+    <footer>
+
+    </footer>
+
+    <script>
+        function togglePassword() {
+            var str = document.getElementById("password");
+            if (str.type === "password") {
+                str.type = "text";
+            } else {
+                str.type = "password";
+            }
+        }
+    </script>
+    
+</body>
+
+</html>
