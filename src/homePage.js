@@ -23,6 +23,7 @@ async function checkUserSession() {
     }
 
     const userUUID = sessionData.session.user.id;
+    currentUuid = userUUID;
 
     const { data: profile, error: profileError } = await supabaseClient
         .from('profiles')
@@ -48,7 +49,7 @@ async function checkUserSession() {
         return null;
     }
 
-    currentUuid = userUUID;
+
     return sessionData.session;
 }
 
@@ -854,17 +855,45 @@ async function sendMessage() {
         alert("Please enter a message before sending lol dont waste requests.");
     }
 
+}
 
+function addLongPressListener(element) {
+    let pressTimer;
 
+    const startPress = (e) => {
+        pressTimer = window.setTimeout(async() => {
+            const messageId = element.dataset.messageId;
+            const confirmDelete = confirm("Delete your selected message?");
+            if (confirmDelete) {
+                
+                const { error } = await supabaseClient
+                .from('messages')
+                .delete()
+                .eq('id', messageId);
+            
+                if(error) {
+                    console.error("Erorr: " + error.message);
+                } else {
+                    element.remove();
+                }
+            }
+        }, 3500);
+    };
 
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    element.addEventListener('mousedown', startPress);
+    element.addEventListener('mouseup', cancelPress);
+    element.addEventListener('mouseleave', cancelPress);
+    element.addEventListener('touchstart', startPress);
+    element.addEventListener('touchend', cancelPress);
 }
 
 async function loadMessage() {
-    if(false) return;
 
     let { data: messages, error } = await supabaseClient
         .from('messages')
-        .select('created_at, sender_id, message, type ,file_path, file_name')
+        .select('id, created_at, sender_id, message, type ,file_path, file_name')
         .eq('conversation_id', currentConversationUuid)
         .order('created_at', { ascending: true })
 
@@ -872,7 +901,6 @@ async function loadMessage() {
         console.error("failed to load messages");
         return;
     } else {
-        // console.log(JSON.stringify(messages,null, 2));
 
         let messageContainer = document.getElementById("message-container");
         const fragment = document.createDocumentFragment();
@@ -881,6 +909,12 @@ async function loadMessage() {
         messages.forEach((msg) => {
             
             const div = document.createElement("div");
+            div.dataset.messageId = msg.id;
+
+            if(msg.sender_id === currentUuid) {
+                addLongPressListener(div);
+            }
+
             div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3");
 
             const timeMessage = document.createElement("p");
@@ -908,7 +942,7 @@ async function loadMessage() {
             else if(msg.type === "image") {
                 const image = document.createElement("img");
                 image.src = `${msg.file_path}`;
-                image.style.width = "250px";
+                image.style.width = "200px";
 
                 div.append(timeMessage, image);
 

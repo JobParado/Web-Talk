@@ -31,7 +31,7 @@ btnRegister.addEventListener("click", async function (event) {
 
 
     if (!data.session) {
-        alert("Account created. Please confirm your email before logging in.");
+        alert("Account created. Please check your email and confirm before logging in.");
         window.location.href = "/index.html";
         return;
     }
