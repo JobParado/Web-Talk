@@ -1,5 +1,10 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/$1" }
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ]
 }
