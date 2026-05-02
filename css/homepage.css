@@ -254,10 +254,25 @@ a:hover {
     .sidebar-right {
         height: 100dvh;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-right .content-1 {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
     }
 
     .sidebar-right .content-2 {
-        height: 100%;
+        display: none;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .sidebar-right .content-2.is-visible {
         display: flex;
     }
 
