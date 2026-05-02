@@ -28,13 +28,17 @@ async function checkUserSession() {
         .from('profiles')
         .select('status')
         .eq('id', userUUID)
-        .single();
+        .maybeSingle();
 
     if (profileError) {
         console.error('Failed to load profile:', profileError?.message);
         await supabaseClient.auth.signOut();
         window.location.replace(LOGIN_PAGE_URL);
         return null;
+    }
+
+    if (!profile) {
+        return sessionData.session;
     }
 
     if (profile?.status === true) {
@@ -60,7 +64,7 @@ async function createProfileRow(session) {
         .from("profiles")
         .select("id, username")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
     // If profile exists, don't overwrite the username
     if (existingProfile) {
@@ -114,10 +118,14 @@ export async function loadCurrentUserProfile() {
         .from("profiles")
         .select("email, username, id")
         .eq("id", userData.user.id)
-        .single();
+        .maybeSingle();
 
     if (profileError) {
         console.error("Failed to load profile:", profileError.message);
+        return;
+    }
+
+    if (!profile) {
         return;
     }
 
