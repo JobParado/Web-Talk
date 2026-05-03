@@ -296,7 +296,7 @@ a:hover {
     }
 }
 
-/* Friend-request and friend list responsive fixes */
+
 #friend-request-list .list-group-item,
 #search-results .list-group-item,
 #current-friends-list .list-group-item {
@@ -315,14 +315,14 @@ a:hover {
     margin-left: 6px;
 }
 
-/* Make the text portion shrink instead of forcing overflow */
+
 #friend-request-list .list-group-item,
 #search-results .list-group-item,
 #current-friends-list .list-group-item {
     overflow: visible;
 }
 
-/* Ensure long usernames truncate instead of pushing buttons off-screen */
+
 #friend-request-list .list-group-item *:first-child,
 #search-results .list-group-item *:first-child,
 #current-friends-list .list-group-item *:first-child {
@@ -333,7 +333,6 @@ a:hover {
 }
 
 @media (max-width: 420px) {
-    /* On very small screens stack the text above the buttons for clarity */
     #friend-request-list .list-group-item,
     #search-results .list-group-item,
     #current-friends-list .list-group-item {

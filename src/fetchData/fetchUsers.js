@@ -16,6 +16,7 @@ async function fetchUsers() {
 			.from("profiles")
 			.select("id, username")
 			.neq("id", currentUserId)
+			.not("status", "is", "true")
 			.order("username", { ascending: true });
 
 		if (error) {

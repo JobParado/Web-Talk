@@ -10,6 +10,8 @@ let currentConversationUuid = null;
 let allChatFriends = [];
 let isRefreshingUsernameViews = false;
 
+let messageChannel = null;
+
 function getUsernameFromEmail(email) {
     if (!email) return "new_user";
     return email.split("@")[0];
@@ -745,6 +747,23 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
         loadMessage();
 
 
+        messageChannel = supabaseClient
+        .channel("messages-live-updates")
+        .on(
+            "postgres_changes",
+            { 
+                event: "*", 
+                schema: "public", 
+                table: "messages",
+                filter: `conversation_id=eq.${currentConversationUuid}`
+            },
+            async (payload) => {
+                await loadMessage();
+            }
+        )
+        .subscribe();
+
+
         return;
     }
 }
@@ -877,7 +896,7 @@ function addLongPressListener(element) {
                     element.remove();
                 }
             }
-        }, 3500);
+        }, 1500);
     };
 
     const cancelPress = () => clearTimeout(pressTimer);
@@ -890,6 +909,10 @@ function addLongPressListener(element) {
 }
 
 async function loadMessage() {
+
+    if (!currentConversationUuid) {
+        return;
+    }
 
     let { data: messages, error } = await supabaseClient
         .from('messages')
@@ -1009,7 +1032,7 @@ async function loadMessage() {
 
 let profilesChannel = null;
 let friendsChannel = null;
-let messageChannel = null;
+
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1171,16 +1194,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         )
         .subscribe();
 
-    messageChannel = supabaseClient
-        .channel("messages-live-updates")
-        .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "messages" },
-            async (payload) => {
-                await loadMessage();
-            }
-        )
-        .subscribe();
 
     const logoutButton = document.getElementById("btn-logout");
 
