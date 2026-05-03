@@ -853,7 +853,7 @@ async function sendMessage() {
             return
         }
     } else {
-        alert("Please enter a message before sending lol dont waste requests.");
+        alert("Please Enter a message");
     }
 
 }
