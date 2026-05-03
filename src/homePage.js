@@ -46,7 +46,7 @@ async function checkUserSession() {
 
     if (profile?.status === true) {
         await supabaseClient.auth.signOut();
-        alert("Account Is Blocked");
+        alert("Account Is Disabled");
         window.location.replace(LOGIN_PAGE_URL);
         return null;
     }
@@ -62,19 +62,16 @@ async function createProfileRow(session) {
     const user = session.user;
     const username = getUsernameFromEmail(user.email);
 
-    // First check if profile already exists
     const { data: existingProfile, error: checkError } = await supabaseClient
         .from("profiles")
         .select("id, username")
         .eq("id", user.id)
         .maybeSingle();
 
-    // If profile exists, don't overwrite the username
     if (existingProfile) {
         return;
     }
 
-    // Only create new profile if it doesn't exist
     const { error } = await supabaseClient
         .from("profiles")
         .insert(
