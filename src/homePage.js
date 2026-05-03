@@ -10,7 +10,6 @@ let currentConversationUuid = null;
 let allChatFriends = [];
 let isRefreshingUsernameViews = false;
 
-let messageChannel = null;
 
 function getUsernameFromEmail(email) {
     if (!email) return "new_user";
@@ -741,24 +740,10 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
         }
 
         updateCurrentConversationHeader();
-        loadMessage();
+        await subscribeToMessages(currentConversationUuid);
 
 
-        messageChannel = supabaseClient
-        .channel("messages-live-updates")
-        .on(
-            "postgres_changes",
-            { 
-                event: "*", 
-                schema: "public", 
-                table: "messages",
-                filter: `conversation_id=eq.${currentConversationUuid}`
-            },
-            async (payload) => {
-                await loadMessage();
-            }
-        )
-        .subscribe();
+        await loadMessage();
 
 
         return;
@@ -1029,6 +1014,34 @@ async function loadMessage() {
 
 let profilesChannel = null;
 let friendsChannel = null;
+let messageChannel = null;
+
+
+async function subscribeToMessages(conversationUuid) {
+
+    if (messageChannel) {
+        await supabaseClient.removeChannel(messageChannel);
+    }
+
+    messageChannel = supabaseClient
+        .channel(`chat-${conversationUuid}`)
+        .on(
+            "postgres_changes",
+            { 
+                event: "*", 
+                schema: "public", 
+                table: "messages",
+                filter: `conversation_id=eq.${conversationUuid}` 
+            },
+            async (payload) => {
+                console.log("Change detected:", payload.eventType);
+                await loadMessage(); 
+            }
+        )
+        .subscribe();
+}
+
+
 
 
 
@@ -1187,6 +1200,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             async () => {
                 await loadFriendRequests();
 
+            }
+        )
+        .subscribe();
+
+    messageChannel = supabaseClient
+        .channel("messages-live-updates")
+        .on(
+            "postgres_changes",
+            { 
+                event: "*", 
+                schema: "public", 
+                table: "messages",
+            },
+            async (payload) => {
+                await loadMessage();
             }
         )
         .subscribe();
