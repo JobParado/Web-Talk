@@ -1,7 +1,7 @@
 import { supabaseClient } from "../config/supabaseClient.js";
 import { loadCurrentUserProfile } from "../homePage.js"
 
-// Flag to prevent race condition on username updates
+
 let isUpdatingUsername = false;
 
 function showPopUp(text) {
