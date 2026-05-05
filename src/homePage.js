@@ -1201,12 +1201,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             customType = "file";
         }
 
-        const { data, error } = await supabaseClient.storage
+        const { data: uploadData, error: uploadError } = await supabaseClient.storage
             .from('chat_files')
             .upload(filePath, file);
 
-        if (error) {
-            console.error("Upload Error:", error.message);
+        if (uploadError) {
+            console.error("Upload Error:", uploadError.message);
             return;
         }
 
@@ -1214,13 +1214,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const { data: publicData } = supabaseClient.storage
             .from('chat_files')
-            .getPublicUrl(data.path);
+            .getPublicUrl(uploadData.path);
 
         const file_path = publicData.publicUrl;
 
         if (file_path.length > 0) {
 
-            const { data, error } = await supabaseClient
+            const { data, error: insertError } = await supabaseClient
                 .from('messages')
                 .insert([
                     {
@@ -1230,13 +1230,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                         file_path: file_path,
                         type: customType,
                         file_name: fileName,
-                        storage_path: data.path
+                        storage_path: uploadData.path
                     },
                 ])
                 .select()
 
-            if (error) {
-                console.error("Upload Error:", error.message);
+            if (insertError) {
+                console.error("Upload Error:", insert.message);
             } else {
 
             }
