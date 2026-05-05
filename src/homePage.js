@@ -617,6 +617,52 @@ async function refreshUsernameDependentViews(changedProfileId = null, changedUse
     }
 }
 
+function showChatPanel() {
+    const content1 = document.querySelector(".content-1");
+    const content2 = document.querySelector(".content-2");
+
+    if (content1) {
+        content1.style.display = "none";
+    }
+
+    if (content2) {
+        content2.classList.add("is-visible");
+    }
+}
+
+const closeChatBtn = document.getElementById("btn-close-chat");
+
+closeChatBtn.addEventListener("click", (event) => {
+    showEmptyChatPanel();
+});
+
+function showEmptyChatPanel() {
+    const content1 = document.querySelector(".content-1");
+    const content2 = document.querySelector(".content-2");
+    const messageContainer = document.getElementById("message-container");
+    const friendName = document.getElementById("friend-name");
+
+    if (content1) {
+        content1.style.display = "flex";
+    }
+
+    if (content2) {
+        content2.classList.remove("is-visible");
+    }
+
+    if (messageContainer) {
+        messageContainer.textContent = "";
+    }
+
+    if (friendName) {
+        friendName.textContent = "Friend Name";
+    }
+
+    currentChatUuid = null;
+    currentChatUsername = "";
+    currentConversationUuid = null;
+}
+
 async function handleFriendRequestAction(action, requestId, targetUserId = null, targetUsername = "") {
     if (!requestId) {
         showPopUp("Missing request id.");
@@ -707,6 +753,9 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
             .or(`user_id.eq.${currentUuid},friend_id.eq.${currentUuid}`)
             .select("id");
 
+            showEmptyChatPanel();
+
+
         if (error) {
             showPopUp(`Unfriend failed: ${error.message}`);
             return;
@@ -729,23 +778,11 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
         let messageId = [currentUuid, currentChatUuid].sort().join("_");
         currentConversationUuid = messageId;
 
-        let messageTab1 = document.querySelector(".content-1");
-        if (messageTab1) {
-            messageTab1.remove();
-        }
-
-        let messageTab2 = document.querySelector(".content-2");
-        if (messageTab2) {
-            messageTab2.classList.add("is-visible");
-        }
+        showChatPanel();
 
         updateCurrentConversationHeader();
         await subscribeToMessages(currentConversationUuid);
-
-
         await loadMessage();
-
-
         return;
     }
 }
@@ -820,7 +857,6 @@ let userMessage = document.getElementById("user-message");
 let btnSentMessage = document.getElementById("btn-send-message");
 
 
-
 btnSentMessage.addEventListener("click", (event) => {
     event.preventDefault();
     sendMessage();
@@ -829,7 +865,7 @@ btnSentMessage.addEventListener("click", (event) => {
 async function sendMessage() {
 
     if (userMessage.value && userMessage.value.trim().length > 0) {
-        let actualMessage = userMessage.value;
+        const actualMessage = userMessage.value;
         userMessage.value = "";
         userMessage.blur();
         userMessage.focus();
@@ -1062,10 +1098,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         bindChatButtons();
     }
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     userMessage.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
+        if(!isMobile) {
+            if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             sendMessage();
+            }
         }
 
     });
