@@ -912,7 +912,7 @@ function addLongPressListener(element) {
 
                 element.remove();
 
-                if(messages.type !== "text") {
+                if(!messages.type === "text") {
                     await DeleteFileFromBucket(messages.file_name);
                 }
                 
