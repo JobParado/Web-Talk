@@ -906,13 +906,13 @@ function addLongPressListener(element) {
 
                 let { data: messages, error } = await supabaseClient
                 .from('messages')
-                .select('file_name')
+                .select('type,file_name')
                 .eq('id',messageId)
                 .single()
 
                 element.remove();
 
-                if(messages.file_name) {
+                if(messages.type !== "text") {
                     await DeleteFileFromBucket(messages.file_name);
                 }
                 
