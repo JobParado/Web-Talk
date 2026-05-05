@@ -906,14 +906,14 @@ function addLongPressListener(element) {
 
                 let { data: messages, error } = await supabaseClient
                 .from('messages')
-                .select('type,file_name')
+                .select('type,file_name,storage_path')
                 .eq('id',messageId)
                 .single()
 
                 element.remove();
 
                 if(messages.type !== "text") {
-                    await DeleteFileFromBucket(messages.file_name);
+                    await DeleteFileFromBucket(messages.storage_path, messages.file_name);
                 }
                 
                 if (error) {
@@ -940,11 +940,18 @@ function addLongPressListener(element) {
 
 
 
-async function DeleteFileFromBucket(fileName) {
+async function DeleteFileFromBucket(storagePath, fallbackFileName) {
+    const deletePath = storagePath || (fallbackFileName ? `uploads/${fallbackFileName}` : null);
+
+    if(!deletePath) {
+        console.error("Error Deleting From buckets: missing storage path");
+        return;
+    }
+
     const { data, error } = await supabaseClient
         .storage
         .from('chat_files')
-        .remove(['uploads/' + fileName])
+        .remove([deletePath])
 
         if(error) {
             console.error("Error Deleting From Bucket: " + error);
@@ -1217,7 +1224,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         conversation_id: currentConversationUuid,
                         file_path: file_path,
                         type: customType,
-                        file_name: fileName
+                        file_name: fileName,
+                        storage_path: data.path
                     },
                 ])
                 .select()
