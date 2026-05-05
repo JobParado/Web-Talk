@@ -38,5 +38,5 @@ btnRegister.addEventListener("click", async function (event) {
 
 
     alert("Signup successful.");
-    window.location.href = "/public/homePage.html";
+    window.location.href = "/homePage.html";
 });

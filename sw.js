@@ -1,9 +1,9 @@
-const CACHE_NAME = 'webtalk-v1';
+const CACHE_NAME = 'webtalk-v2';
 const ASSETS = [
   '/',
   '/index.html',
-  '/public/create.html',
-  '/public/homePage.html',
+  '/create.html',
+  '/homePage.html',
   '/css/homepage.css',
   '/css/LoginCreate.css',
   '/images/favicon_io/favicon.ico',

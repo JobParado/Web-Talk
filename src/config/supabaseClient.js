@@ -1,11 +1,14 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL ="https://lbkfdzzctzgsmdnmyjxi.supabase.co";
-const SUPABASE_ANON_KEY ="sb_publishable_MsSoKbm33DAVez-zG7w2tQ_TQOx_FLa";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error("Missing Supabase credentials in config");
+if (!supabaseUrl) {
+  throw new Error("VITE_SUPABASE_URL is required.");
 }
 
-export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supabaseAnonKey) {
+  throw new Error("VITE_SUPABASE_ANON_KEY is required.");
+}
+
+export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);

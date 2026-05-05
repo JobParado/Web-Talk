@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Account Page</title>
 
-    <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+    <link rel="manifest" href="./images/favicon_io/site.webmanifest">
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
 
-            navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('./sw.js')
                 .then(reg => console.log('PWA Active'))
                 .catch(err => console.log('PWA Error', err));
             });
@@ -52,7 +52,7 @@
 
             <button type="button" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px; " id="btn-login-google">Login / Signup with google instead</button>
 
-            <p>Dont Have An Account? <a href="/public/create.html" class="anchor-link">Sign Up</a></p>
+            <p>Dont Have An Account? <a href="/create.html" class="anchor-link">Sign Up</a></p>
 
         </div>
     </div>
