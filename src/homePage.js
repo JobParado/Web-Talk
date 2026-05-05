@@ -912,19 +912,24 @@ function addLongPressListener(element) {
 
                 element.remove();
 
-                if(!messages.type === "text") {
-                    await DeleteFileFromBucket(messages.file_name);
+                if (error || !messages) {
+                    console.error("Error loading message:", error?.message || "Message not found");
+                    return;
                 }
-                
-                if (error) {
-                    console.error("Erorr: " + error.message);
-                } else {
-                    
-                const { error } = await supabaseClient
+
+                if (messages.type !== "text") {
+                    await DeleteFileFromBucket(messages.storage_path, messages.file_name);
+                }
+
+                const { error: deleteError } = await supabaseClient
                     .from('messages')
                     .delete()
                     .eq('id', messageId);
+
+                if (deleteError) {
+                    console.error("Error deleting message row:", deleteError.message);
                 }
+                
             }
         }, 1500);
     };
@@ -940,22 +945,22 @@ function addLongPressListener(element) {
 
 
 
-async function DeleteFileFromBucket(fileName) {
-    const deletePath = `chat_files/${fileName}`;
+async function DeleteFileFromBucket(storagePath, fallbackFileName) {
+    const pathToDelete = storagePath || (fallbackFileName ? `uploads/${fallbackFileName}` : null);
 
-    if(!deletePath) {
-        console.error("Error Deleting From buckets: missing storage path");
+    if (!pathToDelete) {
+        console.error("Error Deleting From Bucket: missing storage path");
         return;
     }
 
-    const { data, error } = await supabaseClient
+    const { error } = await supabaseClient
         .storage
         .from('chat_files')
-        .remove([deletePath])
+        .remove([pathToDelete]);
 
-        if(error) {
-            console.error("Error Deleting From Bucket: " + error);
-        }
+    if (error) {
+        console.error("Error Deleting From Bucket:", error.message);
+    }
 }
 
 async function loadMessage() {
@@ -1225,6 +1230,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         file_path: file_path,
                         type: customType,
                         file_name: fileName,
+                        storage_path: data.path
                     },
                 ])
                 .select()
