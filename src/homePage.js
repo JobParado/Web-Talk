@@ -913,7 +913,7 @@ function addLongPressListener(element) {
                 element.remove();
 
                 if(messages.type !== "text") {
-                    await DeleteFileFromBucket(messages.storage_path, messages.file_name);
+                    await DeleteFileFromBucket(messages.file_name);
                 }
                 
                 if (error) {
@@ -940,8 +940,8 @@ function addLongPressListener(element) {
 
 
 
-async function DeleteFileFromBucket(storagePath, fallbackFileName) {
-    const deletePath = storagePath || (fallbackFileName ? `uploads/${fallbackFileName}` : null);
+async function DeleteFileFromBucket(fileName) {
+    const deletePath = `chat_files/${fileName}`;
 
     if(!deletePath) {
         console.error("Error Deleting From buckets: missing storage path");
@@ -1225,7 +1225,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                         file_path: file_path,
                         type: customType,
                         file_name: fileName,
-                        storage_path: data.path
                     },
                 ])
                 .select()
