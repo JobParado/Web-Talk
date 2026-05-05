@@ -753,7 +753,7 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
             .or(`user_id.eq.${currentUuid},friend_id.eq.${currentUuid}`)
             .select("id");
 
-            showEmptyChatPanel();
+        showEmptyChatPanel();
 
 
         if (error) {
@@ -898,20 +898,32 @@ function addLongPressListener(element) {
     let pressTimer;
 
     const startPress = (e) => {
-        pressTimer = window.setTimeout(async() => {
+        pressTimer = window.setTimeout(async () => {
             const messageId = element.dataset.messageId;
             const confirmDelete = confirm("Delete your selected message?");
             if (confirmDelete) {
-                
-                const { error } = await supabaseClient
+
+
+                let { data: messages, error } = await supabaseClient
                 .from('messages')
-                .delete()
-                .eq('id', messageId);
-            
-                if(error) {
+                .select('file_name')
+                .eq('id',messageId)
+                .single()
+
+                element.remove();
+
+                if(messages.file_name) {
+                    await DeleteFileFromBucket(messages.file_name);
+                }
+                
+                if (error) {
                     console.error("Erorr: " + error.message);
                 } else {
-                    element.remove();
+                    
+                const { error } = await supabaseClient
+                    .from('messages')
+                    .delete()
+                    .eq('id', messageId);
                 }
             }
         }, 1500);
@@ -924,6 +936,19 @@ function addLongPressListener(element) {
     element.addEventListener('mouseleave', cancelPress);
     element.addEventListener('touchstart', startPress);
     element.addEventListener('touchend', cancelPress);
+}
+
+
+
+async function DeleteFileFromBucket(fileName) {
+    const { data, error } = await supabaseClient
+        .storage
+        .from('chat_files')
+        .remove(['uploads/' + fileName])
+
+        if(error) {
+            console.error("Error Deleting From Bucket: " + error);
+        }
 }
 
 async function loadMessage() {
@@ -948,11 +973,11 @@ async function loadMessage() {
 
 
         messages.forEach((msg) => {
-            
+
             const div = document.createElement("div");
             div.dataset.messageId = msg.id;
 
-            if(msg.sender_id === currentUuid) {
+            if (msg.sender_id === currentUuid) {
                 addLongPressListener(div);
             }
 
@@ -967,8 +992,8 @@ async function loadMessage() {
             }).format(new Date(msg.created_at));
 
             timeMessage.textContent = phTime;
-            
-            if(msg.type === "text") {
+
+            if (msg.type === "text") {
 
                 const message = document.createElement("p");
                 message.classList.add("mb-0", "bg-primary", "p-1");
@@ -980,7 +1005,7 @@ async function loadMessage() {
 
                 div.append(timeMessage, message);
             }
-            else if(msg.type === "image") {
+            else if (msg.type === "image") {
                 const image = document.createElement("img");
                 image.src = `${msg.file_path}`;
                 image.style.width = "200px";
@@ -988,9 +1013,9 @@ async function loadMessage() {
                 div.append(timeMessage, image);
 
             }
-            else if(msg.type === "file") {
+            else if (msg.type === "file") {
                 const link = document.createElement("p");
-                link.classList.add("mb-0","bg-primary","p-1");
+                link.classList.add("mb-0", "bg-primary", "p-1");
                 link.style.borderRadius = "5px";
                 link.style.maxWidth = "90%";
 
@@ -998,14 +1023,14 @@ async function loadMessage() {
                 anchor.style.color = "#DEE3E9";
                 anchor.href = msg.file_path;
                 anchor.textContent = msg.file_name;
-                anchor.target="_blank";
+                anchor.target = "_blank";
                 link.append(anchor);
 
-                div.append(timeMessage,link);
+                div.append(timeMessage, link);
 
-            } else if(msg.type === "video") {
+            } else if (msg.type === "video") {
                 const video = document.createElement("video");
-                video.style.width ="300px";
+                video.style.width = "300px";
                 video.controls = true;
 
                 const source = document.createElement("source");
@@ -1013,18 +1038,18 @@ async function loadMessage() {
                 source.type = "video/mp4";
 
                 video.append(source);
-                div.append(timeMessage,video);
+                div.append(timeMessage, video);
 
-            } else if(msg.type === "audio") {
+            } else if (msg.type === "audio") {
                 const audio = document.createElement("audio");
-                audio.controls= true;
+                audio.controls = true;
 
                 const source = document.createElement("source");
                 source.src = `${msg.file_path}`;
                 source.type = "audio/mpeg";
 
                 audio.append(source);
-                div.append(timeMessage,audio);
+                div.append(timeMessage, audio);
 
             } else {
                 const message = document.createElement("p");
@@ -1037,7 +1062,7 @@ async function loadMessage() {
 
                 div.append(timeMessage, message);
             }
-            
+
             fragment.appendChild(div);
         });
         messageContainer.replaceChildren(fragment);
@@ -1063,15 +1088,15 @@ async function subscribeToMessages(conversationUuid) {
         .channel(`chat-${conversationUuid}`)
         .on(
             "postgres_changes",
-            { 
-                event: "*", 
-                schema: "public", 
+            {
+                event: "*",
+                schema: "public",
                 table: "messages",
-                filter: `conversation_id=eq.${conversationUuid}` 
+                filter: `conversation_id=eq.${conversationUuid}`
             },
             async (payload) => {
                 console.log("Change detected:", payload.eventType);
-                await loadMessage(); 
+                await loadMessage();
             }
         )
         .subscribe();
@@ -1101,10 +1126,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     userMessage.addEventListener('keydown', function (event) {
-        if(!isMobile) {
+        if (!isMobile) {
             if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage();
+                event.preventDefault();
+                sendMessage();
             }
         }
 
@@ -1135,7 +1160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const file = this.files[0];
         const maxUploadSize = 5 * 1024 * 1024;
-        if(file.size > maxUploadSize) {
+        if (file.size > maxUploadSize) {
             alert("File is too large, must be less than 5mb");
             this.value = "";
             return;
@@ -1248,9 +1273,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         .channel("messages-live-updates")
         .on(
             "postgres_changes",
-            { 
-                event: "*", 
-                schema: "public", 
+            {
+                event: "*",
+                schema: "public",
                 table: "messages",
             },
             async (payload) => {
