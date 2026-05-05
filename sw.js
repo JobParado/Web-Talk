@@ -1,4 +1,4 @@
-const CACHE_NAME = 'webtalk-v3';
+const CACHE_NAME = 'webtalk-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -6,6 +6,10 @@ const ASSETS = [
   '/homePage.html',
   '/css/homepage.css',
   '/css/LoginCreate.css',
+  '/images/favicon_io/favicon.ico',
+  '/images/favicon_io/android-chrome-192x192.png',
+  '/images/favicon_io/android-chrome-512x512.png',
+
   '/src/homePage.js',
   '/src/account/account.js',
   '/src/account/loginEmail.js',
