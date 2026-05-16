@@ -50,7 +50,7 @@ async function checkUserSession() {
         return null;
     }
 
-
+    subscribeToPresence();
     return sessionData.session;
 }
 
@@ -783,6 +783,7 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
         updateCurrentConversationHeader();
         await subscribeToMessages(currentConversationUuid);
         await loadMessage();
+        refreshFriendPresence();
         return;
     }
 }
@@ -1115,8 +1116,48 @@ async function subscribeToMessages(conversationUuid) {
 }
 
 
+let presenceChannel = null;
 
+function updateFriendStatus(isOnline) {
+    const statusText = document.getElementById("friend-online-status");
 
+    if(!statusText) {
+        return;
+    }
+
+    statusText.textContent = isOnline ? "Currently Online 🟢" : "Currently Offline ⚪";
+}
+
+function refreshFriendPresence() {
+  if (!presenceChannel || !currentChatUuid) return;
+
+  const state = presenceChannel.presenceState();
+  const activeUsers = Object.values(state).flat();
+
+  const friendIsOnline = activeUsers.some((presence) => presence.user_id === currentChatUuid);
+  updateFriendStatus(friendIsOnline);
+}
+
+async function subscribeToPresence() {
+  if (presenceChannel) {
+    await supabaseClient.removeChannel(presenceChannel);
+  }
+
+  presenceChannel = supabaseClient
+    .channel("presence-lobby")
+    .on("presence", { event: "sync" }, () => {
+      refreshFriendPresence();
+    })
+    .subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        await presenceChannel.track({
+          user_id: currentUuid,
+          username: currentChatUsername,
+          online_at: new Date().toISOString()
+        });
+      }
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     const session = await checkUserSession();
