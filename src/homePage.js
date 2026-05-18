@@ -1125,7 +1125,7 @@ function updateFriendStatus(isOnline) {
         return;
     }
 
-    statusText.textContent = isOnline ? "Currently Online 🟢" : "Currently Offline ⚪";
+    statusText.textContent = isOnline ? "🟢 Currently Online" : " ⚪Currently Offline";
 }
 
 function refreshFriendPresence() {
