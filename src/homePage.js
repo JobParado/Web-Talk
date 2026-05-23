@@ -964,6 +964,20 @@ async function DeleteFileFromBucket(storagePath, fallbackFileName) {
     }
 }
 
+function scrollMessageContainerToBottom(messageContainer) {
+    if (!messageContainer) {
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+
+        requestAnimationFrame(() => {
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        });
+    });
+}
+
 async function loadMessage() {
 
     if (!currentConversationUuid) {
@@ -1021,7 +1035,12 @@ async function loadMessage() {
             else if (msg.type === "image") {
                 const image = document.createElement("img");
                 image.src = `${msg.file_path}`;
+                image.loading = "eager";
+                image.decoding = "async";
                 image.style.width = "200px";
+                image.addEventListener("load", () => {
+                    scrollMessageContainerToBottom(messageContainer);
+                });
 
                 div.append(timeMessage, image);
 
@@ -1045,6 +1064,10 @@ async function loadMessage() {
                 const video = document.createElement("video");
                 video.style.width = "300px";
                 video.controls = true;
+                video.preload = "metadata";
+                video.addEventListener("loadedmetadata", () => {
+                    scrollMessageContainerToBottom(messageContainer);
+                });
 
                 const source = document.createElement("source");
                 source.src = `${msg.file_path}`;
@@ -1056,6 +1079,10 @@ async function loadMessage() {
             } else if (msg.type === "audio") {
                 const audio = document.createElement("audio");
                 audio.controls = true;
+                audio.preload = "metadata";
+                audio.addEventListener("loadedmetadata", () => {
+                    scrollMessageContainerToBottom(messageContainer);
+                });
 
                 const source = document.createElement("source");
                 source.src = `${msg.file_path}`;
@@ -1079,15 +1106,9 @@ async function loadMessage() {
             fragment.appendChild(div);
         });
         messageContainer.replaceChildren(fragment);
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-        reScrolltoTop();   
+        scrollMessageContainerToBottom(messageContainer);
     }
 
-}
-
-function reScrolltoTop() {
-    let messageContainer = document.getElementById("message-container");
-    messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 let profilesChannel = null;
