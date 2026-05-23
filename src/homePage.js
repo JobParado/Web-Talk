@@ -374,7 +374,7 @@ function displayFriendRequests(requests) {
     if (!requests || requests.length === 0) {
         const emptyItem = document.createElement("li");
         emptyItem.className = "list-group-item text-muted";
-        emptyItem.textContent = "No friend requests";
+        emptyItem.textContent = "No incoming friend requests";
         requestList.appendChild(emptyItem);
         return;
     }
@@ -1080,11 +1080,15 @@ async function loadMessage() {
         });
         messageContainer.replaceChildren(fragment);
         messageContainer.scrollTop = messageContainer.scrollHeight;
+        reScrolltoTop();   
     }
 
 }
 
-
+function reScrolltoTop() {
+    let messageContainer = document.getElementById("message-container");
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+}
 
 let profilesChannel = null;
 let friendsChannel = null;
