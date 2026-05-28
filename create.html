@@ -27,25 +27,24 @@
 
 <body>
     <header>
-        <h2>Welcome to WebTalk!</h2>
+        <h2>WebTalk</h2>
+        <p>Create your account to get started</p>
     </header>
 
     <div class="parent">
         <div class="content">
-            <h2 style="text-align: center;">Create Your Account 📧</h2>
+            <h2 style="text-align: center;">Create Account</h2>
+            <p>Sign up with your email and password</p>
 
-
-
-            <!-- <form id="registerForm" class="registerForm" action="create.php" method="post"> -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" required name="email">
+                <input type="email" class="form-control input-field" id="email" required name="email">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" required name="password">
+                <input type="password" class="form-control input-field" id="password" required name="password">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: start; margin-bottom: 10px;">
+            <div style="display: flex; gap: 10px; justify-content: start; margin-bottom: 20px; margin-top: 20px;">
                 <input type="checkbox" class="checkbox" id="showPassword" onclick="togglePass(this)">
                 <label for="showPassword">Show Password</label>
             </div>
@@ -53,7 +52,6 @@
             <button class="btn btn-primary btn-submit" id="btn-register">Create my account</button>
 
             <p class="anchor-p">Already Have An Account? <a href="/index.html" class="anchor-link">Sign In</a></p>
-            <!-- </form> -->
 
         </div>
     </div>
