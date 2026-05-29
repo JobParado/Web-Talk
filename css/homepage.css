@@ -33,7 +33,7 @@ body {
 .sidebar-left {
     background: var(--background-color2);
     border-radius: 15px;
-    width: 7%;
+    width: 5%;
     margin-right: 10px;
 }
 
@@ -216,6 +216,9 @@ a:hover {
         font-size: 1em;
     }
 
+    .remove-br {
+        display: none;
+    }
     .my-container {
         flex-direction: column;
         padding: 10px;

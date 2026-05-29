@@ -19,16 +19,17 @@
     </script>
 
     <link rel="icon" type="image/x-icon" href="./images/favicon_io/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="./css/homepage.css">
     <script type="module" src="./src/homePage.js"></script>
     <script type="module" src="./src/account/account.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 
 <body>
 
     <div id="container-top">
-
+        <!-- my basic pop up needs changes -->
     </div>
 
     <div class="my-container">
@@ -37,14 +38,24 @@
             <ul class="nav flex-column" style="text-align: center;">
 
                 <li class="nav-item">
-                    <a class="nav-link tab-link is-active" data-tab="chats" style="color: #DEE3E9;">Chats</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab-link" data-tab="friends" style="color: #DEE3E9;">Friends</a>
+                    <a class="nav-link tab-link is-active" data-tab="chats" style="color: #DEE3E9;">
+                        <i class="bi bi-chat-dots"></i><br class="remove-br">
+                        <span>Chats</span>
+                    </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link tab-link" data-tab="settings" style="color: #DEE3E9;">Settings</a>
+                    <a class="nav-link tab-link" data-tab="friends" style="color: #DEE3E9;">
+                        <i class="bi bi-people-fill"></i><br class="remove-br">
+                        <span>Friends</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link tab-link" data-tab="settings" style="color: #DEE3E9;">
+                        <i class="bi bi-gear"></i><br class="remove-br">
+                        <span>Settings</span>
+                    </a>
                 </li>
             </ul>
 
@@ -145,51 +156,48 @@
 
                 <div class="chat-area flex-grow-1" style="padding: 20px;" id="message-container">
 
+                    <!-- <div class="d-flex flex-column align-items-start mb-3">
+                        <p class="mb-0 text-nowrap">1:30:59 AM 4/28/2026</p>
+                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Hello Bro How Are You?</p>
+                    </div>
 
-                <!-- <div class="d-flex flex-column align-items-start mb-3">
-                    <p class="mb-0 text-nowrap">1:30:59 AM 4/28/2026</p>
-                    <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Hello Bro How Are You?</p>
-                </div>
-
-                <div class="d-flex flex-column align-items-end mb-3">
-                    <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                    <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Im Fine What About U?</p>
-                </div>
-
-
-                <div class="d-flex flex-column align-items-end mb-3">
-                    <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                    <img src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
-                        width="250px">
-                </div>
-
-
-                <div class="d-flex flex-column align-items-start mb-3">
-                    <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                    <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">
-                        <a href="" style="color:#DEE3E9;" download>
-                            Resume.pdf
-                        </a>
-                    </p>
-                </div>
-
-
-                <div class="d-flex flex-column align-items-end mb-3">
-                    <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                    <video width="300px" controls>
-                        <source src="../xvFZjo5PgG0.mp4" type="video/mp4">
-                    </video>
-                </div>
-
-
-                <div class="d-flex flex-column align-items-end mb-3">
-                    <audio controls>
+                    <div class="d-flex flex-column align-items-end mb-3">
                         <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                        <source src="../Mzg1ODMxNTIzMzg1ODM3_JzthsfvUY24.MP3" type="audio/mpeg">
-                    </audio>
-                </div> -->
+                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Im Fine What About U?</p>
+                    </div>
 
 
+                    <div class="d-flex flex-column align-items-end mb-3">
+                        <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
+                        <img src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
+                            width="250px">
+                    </div>
+
+
+                    <div class="d-flex flex-column align-items-start mb-3">
+                        <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
+                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">
+                            <a href="" style="color:#DEE3E9;" download>
+                                Resume.pdf
+                            </a>
+                        </p>
+                    </div>
+
+
+                    <div class="d-flex flex-column align-items-end mb-3">
+                        <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
+                        <video width="300px" controls>
+                            <source src="../xvFZjo5PgG0.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+
+                    <div class="d-flex flex-column align-items-end mb-3">
+                        <audio controls>
+                            <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
+                            <source src="../Mzg1ODMxNTIzMzg1ODM3_JzthsfvUY24.MP3" type="audio/mpeg">
+                        </audio>
+                    </div> -->
 
                 </div>
 
@@ -205,14 +213,9 @@
                 </div>
             </div>
 
-
-
         </div>
 
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
     <script>
         const tabLinks = document.querySelectorAll(".tab-link");
         const tabContents = document.querySelectorAll(".tab-content");
@@ -249,6 +252,7 @@
             showTab(tabLinks[0].dataset.tab);
         }
     </script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script>
 </body>
 
 </html>
