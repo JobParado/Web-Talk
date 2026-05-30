@@ -1035,6 +1035,7 @@ async function loadMessage() {
             else if (msg.type === "image") {
                 const image = document.createElement("img");
                 image.src = `${msg.file_path}`;
+                image.style.borderRadius = "10px";
                 image.loading = "eager";
                 image.decoding = "async";
                 image.style.width = "200px";
@@ -1062,6 +1063,7 @@ async function loadMessage() {
 
             } else if (msg.type === "video") {
                 const video = document.createElement("video");
+                video.style.borderRadius = "10px";
                 video.style.width = "300px";
                 video.controls = true;
                 video.preload = "metadata";
