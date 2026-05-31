@@ -45,7 +45,7 @@ async function checkUserSession() {
 
     if (profile?.status === true) {
         await supabaseClient.auth.signOut();
-        alert("Account Is Disabled");
+        alert("Account Currently Disabled");
         window.location.replace(LOGIN_PAGE_URL);
         return null;
     }
@@ -502,23 +502,31 @@ function displayChatFriends(acceptedFriends) {
     chatList.textContent = "";
 
     if (!acceptedFriends || acceptedFriends.length === 0) {
-        const emptyItem = document.createElement("li");
-        emptyItem.className = "list-group-item d-flex justify-content-between align-items-center";
-        emptyItem.textContent = "No Chats Yet...";
-        chatList.appendChild(emptyItem);
+        // no chats yet
         return;
     }
 
     acceptedFriends.forEach((friendRow) => {
         const listItem = document.createElement("li");
-        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+        listItem.className = "list-group-item d-flex justify-content-between align-items-center current-chat";
 
         const otherUsername = friendRow.user_id === currentUuid
             ? friendRow.receiver_username
             : friendRow.sender_username;
 
+        const infoWrapper = document.createElement("div");
+        infoWrapper.className = "d-flex align-items-center gap-2";
+
+        const friendIcon = document.createElement("div");
+        friendIcon.className = "friend-icon";
+        friendIcon.textContent = otherUsername[0].toUpperCase();
+
         const usernameText = document.createElement("span");
+        usernameText.className = "current-chat-friends";
         usernameText.textContent = otherUsername;
+
+        infoWrapper.appendChild(friendIcon);
+        infoWrapper.appendChild(usernameText);
 
         const messageButton = document.createElement("button");
         messageButton.type = "button";
@@ -531,7 +539,7 @@ function displayChatFriends(acceptedFriends) {
         messageButton.dataset.targetUserId = targetUserUuid;
         messageButton.dataset.targetUsername = otherUsername;
 
-        listItem.appendChild(usernameText);
+        listItem.appendChild(infoWrapper);
         listItem.appendChild(messageButton);
         chatList.appendChild(listItem);
     });

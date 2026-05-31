@@ -1,1 +1,84 @@
-/* Will be used later on the generated friends and messages list and design them */
+:root {
+    --background-color: #1C1E21;
+    --background-color2: #262a2c;
+    --paragraph-color: #dee3e9;
+    --paragraph-color2: #b6bbc2;
+    --button-bg-color: #0064E0;
+
+    --bg-elevated: #2f3437;
+    --border-subtle: rgba(255,255,255,0.1);
+    --text-primary: #dee3e9;
+}
+
+.current-chat-search::placeholder {
+    color: var(--paragraph-color);
+    opacity: 1;
+}
+.chat-text-area::placeholder {
+  color: var(--paragraph-color);
+  opacity: 1;
+}
+
+.search-new-friends::placeholder {
+    color: var(--paragraph-color);
+    opacity: 1;
+}
+
+.search-new-friends {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+.search-new-friends:focus {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+
+
+.chat-text-area {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+.chat-text-area:focus {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+.current-chat-search {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+.current-chat-search:focus {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+
+.current-chat {
+    background-color: var(--background-color2);
+}
+.current-chat-friends {
+    color: var(--paragraph-color);
+}
+.friend-icon {
+    height: 40px;
+    width: 40px;
+    background: var(--button-bg-color);
+    border-radius: 50%;
+
+    /* centers the friend text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--paragraph-color);
+}
+.current-chat:hover {
+    background: var(--background-color);
+
+}

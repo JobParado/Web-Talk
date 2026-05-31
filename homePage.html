@@ -21,6 +21,7 @@
     <link rel="icon" type="image/x-icon" href="./images/favicon_io/favicon.ico">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="./css/homepage.css">
+    <link rel="stylesheet" href="./css/homepage2.css">
     <script type="module" src="./src/homePage.js"></script>
     <script type="module" src="./src/account/account.js"></script>
     <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
@@ -66,14 +67,14 @@
 
             <div class="tab-content is-visible" data-tab-content="chats">
                 <h3>Chats</h3>
-                <input id="chat-search-input" class="form-control" type="text" placeholder="Search Current Contacts"
+                <p style="color: #a6abb1;">Your conversations with friends</p>
+                <input id="chat-search-input" class="form-control current-chat-search" type="text" placeholder="Search Current Contacts"
                     aria-label="default input example" autocomplete="off">
 
                 <div class="friend-list-container" style="max-height: 740px; overflow-y: auto; margin-top: 20px;">
                     <ul class="list-group list-group-flush" id="chat-list">
 
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            No Chats Yet...
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background: #262a2c; color: #dee3e9;">
                         </li>
 
                     </ul>
@@ -83,7 +84,8 @@
             <div class="tab-content" data-tab-content="friends">
                 <div>
                     <h3>Friends</h3>
-                    <p> Current Friends Lists</p>
+                    <p style="color: #a6abb1;">Manage your connections</p>
+                    <p style="color: #a6abb1;">Current Friends</p>
                     <div class="friend-list-container" style="max-height: 200px; overflow-y: auto;">
                         <ul class="list-group list-group-flush" id="current-friends-list">
 
@@ -93,7 +95,7 @@
 
                 <div style="margin-top: 20px;">
                     <p> Add New Friends</p>
-                    <input id="friends-search-input" class="form-control" type="text" placeholder="Search For Friends to add"
+                    <input id="friends-search-input" class="form-control search-new-friends" type="text" placeholder="Search For Friends to add"
                         aria-label="default input example" style="margin-bottom: 20px;" autocomplete="off">
                     <div class="friend-list-container" style="max-height: 200px; overflow-y: auto;">
                         <ul class="list-group list-group-flush" id="search-results">
@@ -207,7 +209,7 @@
                         <label for="message-files" class="btn btn-primary">Send Files</label>
                         <input type="file" id="message-files" style="display: none;">
                     </div>
-                        <textarea rows="1" class="form-control me-2"  placeholder="Type a message..." aria-label="Message input" id="user-message" autocomplete="off" style="resize: none; margin-left: 5px;"></textarea>
+                        <textarea rows="1" class="form-control me-2 chat-text-area"  placeholder="Type a message..." aria-label="Message input" id="user-message" autocomplete="off" style="resize: none; margin-left: 5px;"></textarea>
                         <button type="button" class="btn btn-primary" id="btn-send-message">Send</button>
                     </div>
                 </div>

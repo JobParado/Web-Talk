@@ -100,7 +100,6 @@ body {
 
 p {
     color: var(--paragraph-color);
-    font-size: 1.2em;
 }
 
 h1,
@@ -179,13 +178,13 @@ a:hover {
 }
 
 /* Tablet */
-@media (max-width: 1527px) {
+@media (max-width: 1725px) {
     .my-container {
         padding: 12px;
     }
 
     .sidebar-left {
-        width: 14%;
+        width: 12%;
     }
 
     .sidebar-right {
