@@ -1,7 +1,7 @@
 :root {
     --header-color: #262a2c;
     --header-text-color: #dee3e9;
-    --paragraph-text-color: #9aa3ad; 
+    --paragraph-text-color: #9aa3ad;
 
     --content-bg-color: #262a2c;
     --content-text-color: #FFFFFF;
@@ -12,18 +12,21 @@
     --anchor-color: #0064e0;
 
     --bg-elevated: #2f3437;
-    --border-subtle: rgba(255,255,255,0.1);
+    --border-subtle: rgba(255, 255, 255, 0.1);
     --text-primary: #dee3e9;
 }
+
 html {
     scroll-behavior: smooth;
 }
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.1rem;
     background: var(--body-bg-color);
 }
+
 header {
     background: var(--header-color);
     width: 100%;
@@ -31,23 +34,37 @@ header {
     padding: 15px;
     box-shadow: 2px 2px #33393b;
 }
-h2,p {
+
+h2,
+p {
     text-align: center;
     padding: 0;
     margin: 0;
 }
-h2{
+
+h2 {
     color: var(--header-text-color);
     font-size: 24px;
     font-weight: bold;
 }
+
 p {
     color: var(--paragraph-text-color);
     font-size: 16px;
 }
+
 label {
     font-size: 16px;
 }
+
+#toggle-password-login, #toggle-password-signup {
+    display: flex;
+    gap: 10px;
+    justify-content: start;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
 .input-field {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
@@ -55,55 +72,66 @@ label {
     padding: 0.6rem 0.75rem;
     border-radius: 8px;
 }
+
 .input-field:focus {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
     color: var(--text-primary);
 }
+
 input[type="checkbox"] {
     transform: scale(0.9);
 }
+
 .nav-link {
     color: var(--header-text-color);
 }
-.anchor-link{
+
+.anchor-link {
     text-decoration: none;
     color: var(--anchor-color);
 }
-.anchor-p{
+
+.anchor-p {
     margin-top: 20px;
 }
-.parent { 
+
+.parent {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 1rem;
 }
-.content > p {
+
+.content>p {
     color: var(--page-text-subtitle);
 }
+.content
+
 label {
     color: var(--label-text-color);
 }
 
 .separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 15px 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
 }
+
 .separator::before,
 .separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #333842;
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #333842;
 }
+
 .separator span {
-  padding: 0 10px;
-  color: #6C727F;
-  font-size: 12px;
-  font-family: sans-serif;
+    padding: 0 10px;
+    color: #6C727F;
+    font-size: 12px;
+    font-family: sans-serif;
 }
 
 .content {
@@ -114,12 +142,14 @@ label {
     border-radius: 15px;
     box-shadow: 0px 0px 2px #acbec7;
 }
+
 .content h2 {
     font-size: clamp(1.4rem, 4vw, 2rem);
     margin-bottom: 5px;
     font-size: 27px;
     font-weight: bold;
 }
+
 .content p {
     margin-bottom: 15px;
 }
@@ -127,12 +157,57 @@ label {
 .content .form-control {
     min-height: 44px;
 }
+
 .btn-submit {
     width: 100%;
 }
+
 .checkbox {
     width: 20px;
 }
+
+#btn-login-google {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #1f1f1f;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    padding: 0 12px;
+    height: 40px;
+    border: 1px solid #747775;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#btn-login-google .google-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+#btn-login-google:active {
+    background-color: #ebf1fa;
+}
+
+#btn-login-google:focus-visible {
+    outline: none;
+    border-color: #0b57d0;
+    background-color: #f8fafd;
+}
+
 @media (max-width:768px) {
     /* .parent {
         padding: 1rem;

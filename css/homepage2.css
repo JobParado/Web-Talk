@@ -2,12 +2,16 @@
     --background-color: #1C1E21;
     --background-color2: #262a2c;
     --paragraph-color: #dee3e9;
-    --paragraph-color2: #b6bbc2;
+    --paragraph-color2: #747981;
     --button-bg-color: #0064E0;
 
     --bg-elevated: #2f3437;
     --border-subtle: rgba(255,255,255,0.1);
     --text-primary: #dee3e9;
+}
+
+span {
+  pointer-events: none;
 }
 
 .current-chat-search::placeholder {
@@ -66,6 +70,9 @@
 .current-chat-friends {
     color: var(--paragraph-color);
 }
+.tap-to-open-chat {
+    color: var(--paragraph-color2);
+}
 .friend-icon {
     height: 40px;
     width: 40px;
@@ -79,6 +86,18 @@
     color: var(--paragraph-color);
 }
 .current-chat:hover {
-    background: var(--background-color);
+    background: #383c42;
+}
 
+
+
+@media (max-width: 1725px) {
+    .tap-to-open-chat {
+        display: none;
+    }
+}
+@media (max-width: 768px) {
+    .tap-to-open-chat {
+        display: block;
+    }
 }

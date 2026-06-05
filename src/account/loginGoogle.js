@@ -10,7 +10,7 @@ if (btnLoginGoogle) {
       provider: "google",
       options: {
 
-        redirectTo: `${window.location.origin}/homePage.html`,
+        redirectTo: `${window.location.origin}/index.html`,
         queryParams: {
           prompt: "select_account"
         }

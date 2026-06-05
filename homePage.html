@@ -25,6 +25,7 @@
     <script type="module" src="./src/homePage.js"></script>
     <script type="module" src="./src/account/account.js"></script>
     <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./css/skeleton.css">
 </head>
 
 <body>
@@ -36,77 +37,90 @@
     <div class="my-container">
 
         <div class="sidebar-left">
-            <ul class="nav flex-column" style="text-align: center;">
+            <li class="nav-item">
+                <a class="nav-link tab-link is-active" data-tab="chats">
+                    <i class="bi bi-chat-dots"></i><br>
+                    <span>Chats</span>
+                </a>
+            </li>
 
-                <li class="nav-item">
-                    <a class="nav-link tab-link is-active" data-tab="chats" style="color: #DEE3E9;">
-                        <i class="bi bi-chat-dots"></i><br class="remove-br">
-                        <span>Chats</span>
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a class="nav-link tab-link" data-tab="friends">
+                    <i class="bi bi-people"></i><br>
+                    <span>Friends</span>
+                </a>
+            </li>
 
-                <li class="nav-item">
-                    <a class="nav-link tab-link" data-tab="friends" style="color: #DEE3E9;">
-                        <i class="bi bi-people-fill"></i><br class="remove-br">
-                        <span>Friends</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link tab-link" data-tab="settings" style="color: #DEE3E9;">
-                        <i class="bi bi-gear"></i><br class="remove-br">
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-
-
+            <li class="nav-item">
+                <a class="nav-link tab-link" data-tab="settings">
+                    <i class="bi bi-gear"></i><br>
+                    <span>Settings</span>
+                </a>
+            </li>
         </div>
 
         <div class="middle">
 
             <div class="tab-content is-visible" data-tab-content="chats">
                 <h3>Chats</h3>
-                <p style="color: #a6abb1;">Your conversations with friends</p>
-                <input id="chat-search-input" class="form-control current-chat-search" type="text" placeholder="Search Current Contacts"
+                <p class="subtitle">Your conversations with friends</p>
+                <input id="chat-search-input" class="form-control current-chat-search" type="text" placeholder="Search Contacts"
                     aria-label="default input example" autocomplete="off">
 
-                <div class="friend-list-container" style="max-height: 740px; overflow-y: auto; margin-top: 20px;">
+                <div class="friend-list-container">
                     <ul class="list-group list-group-flush" id="chat-list">
 
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background: #262a2c; color: #dee3e9;">
-                        </li>
+                        <div class="card1">
+                            <!-- <div class="card__skeleton card__title"></div> -->
+                            <div class="card__skeleton1 card__description1"></div>
+                        </div>
+                            <!-- current chat list DOM layout
+                             
+                                <li class="list-group-item d-flex justify-content-between align-items-center current-chat">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="friend-icon">J</div>
+                                    <div style="display: flex; flex-direction: column;">
+                                    <span class="current-chat-friends">JohnDoe</span>
+                                    <span class="tap-to-open-chat">Tap Message To Chat</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" data-action="message" data-request-id="123" data-target-user-id="xyz-456" data-target-username="JohnDoe">
+                                    Message
+                                </button>
+                                </li>
 
+                             -->
                     </ul>
                 </div>
             </div>
+        
 
             <div class="tab-content" data-tab-content="friends">
                 <div>
                     <h3>Friends</h3>
-                    <p style="color: #a6abb1;">Manage your connections</p>
-                    <p style="color: #a6abb1;">Current Friends</p>
-                    <div class="friend-list-container" style="max-height: 200px; overflow-y: auto;">
+                    <p class="subtitle">Manage your connections</p>
+                    <p class="subtitle">Current Friends</p>
+                    <div class="friend-list-container" id="friend-list-container2">
                         <ul class="list-group list-group-flush" id="current-friends-list">
 
                         </ul>
                     </div>
                 </div>
 
-                <div style="margin-top: 20px;">
+                <div class="friends-list-spacing-3">
                     <p> Add New Friends</p>
                     <input id="friends-search-input" class="form-control search-new-friends" type="text" placeholder="Search For Friends to add"
-                        aria-label="default input example" style="margin-bottom: 20px;" autocomplete="off">
-                    <div class="friend-list-container" style="max-height: 200px; overflow-y: auto;">
+                        aria-label="default input example" autocomplete="off">
+                    <div class="friend-list-container" id="friend-list-container3">
                         <ul class="list-group list-group-flush" id="search-results">
 
                         </ul>
                     </div>
                 </div>
 
-                <div style="margin-top: 20px;">
+                <div class="friends-list-spacing-3">
                     <p>Friend Requests</p>
-                    <div class="friend-list-container" style="max-height: 200px; overflow-y: auto;">
+                    <div class="friend-list-container" id="friend-list-container4">
                         <ul class="list-group list-group-flush" id="friend-request-list">
 
                         </ul>
@@ -144,28 +158,42 @@
         <div class="sidebar-right">
 
             <div class="content-1">
-                <h2 style="color: #DEE3E9; font-size: 20px; text-align: center;">Select From Chats To Begin Messaging</h2>
+                <div id="sidebar-right-tips">
+                    <p id="emoji">✉️</p>
+                    <p id="select-chat">Select a chat</p>
+                    <p id="tip1">Choose a contact from your chat list to start messaging.</p>
+                    <p id="tip2">Tip: Long-press your own messages to delete them.</p>
+                </div>
             </div>
 
-            <div class="content-2" style="width: 100%; ">
-                <div class="top-area p-3 border-bottom" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h3 id="friend-name" class="m-0">Friend Name</h3>
-                        <p id="friend-online-status">Online Status</p>
+            <div class="content-2">
+                <div class="top-area p-3 border-bottom">
+                    <div class="top-area-container">
+                        <div id="top-area-profile" class="no-type-cursor">
+                            <span class="friend-first-letter">A</span>
+                        </div>
+                        <div>
+                            <p id="friend-name" class="m-0">Friend Name</p>
+                            <div id="friend-container">
+                                <div id="online-icon"></div>
+                                <p id="friend-online-status">Online Status</p>
+                            </div>
+                        </div>
+
                     </div>
                     <button type="button" class="btn btn-secondary" id="btn-close-chat">Close Chat</button>
                 </div>
 
-                <div class="chat-area flex-grow-1" style="padding: 20px;" id="message-container">
+                <div class="chat-area flex-grow-1" id="message-container">
 
                     <!-- <div class="d-flex flex-column align-items-start mb-3">
                         <p class="mb-0 text-nowrap">1:30:59 AM 4/28/2026</p>
-                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Hello Bro How Are You?</p>
+                        <p class="mb-0 bg-primary p-2" style="border-radius: 5px; max-width: 90%;">Hello Bro How Are You?</p>
                     </div>
 
                     <div class="d-flex flex-column align-items-end mb-3">
                         <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">Im Fine What About U?</p>
+                        <p class="mb-0 bg-primary p-2" style="border-radius: 5px; max-width: 90%;">Im Fine What About U?</p>
                     </div>
 
 
@@ -178,7 +206,7 @@
 
                     <div class="d-flex flex-column align-items-start mb-3">
                         <p class="mb-0 text-nowrap">1:31:39 AM 4/28/2026</p>
-                        <p class="mb-0 bg-primary p-1" style="border-radius: 5px; max-width: 90%;">
+                        <p class="mb-0 bg-primary p-2" style="border-radius: 5px; max-width: 90%;">
                             <a href="" style="color:#DEE3E9;" download>
                                 Resume.pdf
                             </a>
@@ -202,22 +230,33 @@
                     </div> -->
 
                 </div>
+                
 
-                <div class="bottom-area border-top" style="padding: 10px;">
-                    <div class="d-flex">
-                    <div>
-                        <label for="message-files" class="btn btn-primary">Send Files</label>
-                        <input type="file" id="message-files" style="display: none;">
+                <div class="bottom-area border-top">
+                        <div class="user-chat">
+
+                            <button type="button" class="btn btn-primary" id="btn-message-files">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+
+                            <input type="file" id="message-files" hidden>
+                                
+                            <textarea rows="2" class="form-control chat-text-area"  placeholder="Type a message..." aria-label="Message input" id="user-message" autocomplete="off"></textarea>
+
+                            <button type="button" class="btn btn-primary" id="btn-send-message">     
+                                <i class="bi bi-send"></i>
+                            </button>
+                            
+                        </div>
                     </div>
-                        <textarea rows="1" class="form-control me-2 chat-text-area"  placeholder="Type a message..." aria-label="Message input" id="user-message" autocomplete="off" style="resize: none; margin-left: 5px;"></textarea>
-                        <button type="button" class="btn btn-primary" id="btn-send-message">Send</button>
-                    </div>
+
                 </div>
             </div>
 
         </div>
 
     </div>
+    
     <script>
         const tabLinks = document.querySelectorAll(".tab-link");
         const tabContents = document.querySelectorAll(".tab-content");

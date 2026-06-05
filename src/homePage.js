@@ -1,5 +1,11 @@
 import { supabaseClient } from "./config/supabaseClient.js";
 import { fetchUsers } from "./fetchData/fetchUsers.js";
+import {
+    displaySearchResults,
+    displayFriendRequests,
+    displayCurrentFriends,
+    displayChatFriends
+} from "./fetchData/friendLists.js";
 
 const LOGIN_PAGE_URL = "/index.html";
 
@@ -190,46 +196,6 @@ function searchUsers(searchTerm) {
     return allUsers.filter((user) => user.username?.toLowerCase().includes(normalized));
 }
 
-function displaySearchResults(users, emptyMessage = "No users found") {
-    const resultsContainer = document.getElementById("search-results");
-
-    if (!resultsContainer) {
-        console.error("Results container not found");
-        return;
-    }
-
-    resultsContainer.textContent = "";
-
-    if (!users || users.length === 0) {
-
-        const emptyItem = document.createElement("li");
-        emptyItem.className = "list-group-item text-muted";
-        emptyItem.textContent = emptyMessage;
-
-        resultsContainer.appendChild(emptyItem);
-        return;
-    }
-
-    users.forEach((user) => {
-        const listItem = document.createElement("li");
-        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
-
-        const usernameText = document.createElement("span");
-        usernameText.textContent = user.username;
-
-        const addButton = document.createElement("button");
-        addButton.type = "button";
-        addButton.className = "btn btn-success btn-sm";
-        addButton.textContent = "Add Friend";
-
-        addButton.dataset.userId = user.id;
-
-        listItem.appendChild(usernameText);
-        listItem.appendChild(addButton);
-        resultsContainer.appendChild(listItem);
-    });
-}
-
 
 function bindAddFriendButtons() {
     const resultsContainer = document.getElementById("search-results");
@@ -361,190 +327,6 @@ async function fetchFriendRequests() {
     }));
 }
 
-function displayFriendRequests(requests) {
-    const requestList = document.getElementById("friend-request-list");
-
-    if (!requestList) {
-        console.error("friend-request-list not found");
-        return;
-    }
-
-    requestList.textContent = "";
-
-    if (!requests || requests.length === 0) {
-        const emptyItem = document.createElement("li");
-        emptyItem.className = "list-group-item text-muted";
-        emptyItem.textContent = "No incoming friend requests";
-        requestList.appendChild(emptyItem);
-        return;
-    }
-
-    requests.forEach((requestRow) => {
-        const listItem = document.createElement("li");
-        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
-
-        const leftText = document.createElement("span");
-
-        const actionContainer = document.createElement("div");
-        actionContainer.className = "d-flex gap-2";
-
-        const isSender = requestRow.user_id === currentUuid;
-        const isReceiver = requestRow.friend_id === currentUuid;
-        const isPending = requestRow.status === "pending";
-
-        if (isSender && isPending) {
-            leftText.textContent = `To ${requestRow.receiver_username} (Pending)`;
-
-            const cancelButton = document.createElement("button");
-            cancelButton.type = "button";
-            cancelButton.className = "btn btn-outline-danger btn-sm";
-            cancelButton.textContent = "Cancel";
-            cancelButton.dataset.requestId = requestRow.id;
-            cancelButton.dataset.action = "cancel";
-
-            actionContainer.appendChild(cancelButton);
-        }
-
-        if (isReceiver && isPending) {
-            leftText.textContent = `From ${requestRow.sender_username}`;
-
-            const acceptButton = document.createElement("button");
-            acceptButton.type = "button";
-            acceptButton.className = "btn btn-success btn-sm";
-            acceptButton.textContent = "Accept";
-            acceptButton.dataset.requestId = requestRow.id;
-            acceptButton.dataset.action = "accept";
-
-            const declineButton = document.createElement("button");
-            declineButton.type = "button";
-            declineButton.className = "btn btn-outline-secondary btn-sm";
-            declineButton.textContent = "Decline";
-            declineButton.dataset.requestId = requestRow.id;
-            declineButton.dataset.action = "decline";
-
-            actionContainer.appendChild(acceptButton);
-            actionContainer.appendChild(declineButton);
-        }
-
-        listItem.appendChild(leftText);
-        listItem.appendChild(actionContainer);
-        requestList.appendChild(listItem);
-    });
-}
-
-function displayCurrentFriends(acceptedFriends) {
-    const currentFriendsList = document.getElementById("current-friends-list");
-
-    if (!currentFriendsList) {
-        console.error("current-friends-list not found");
-        return;
-    }
-
-    currentFriendsList.textContent = "";
-
-    if (!acceptedFriends || acceptedFriends.length === 0) {
-        const emptyItem = document.createElement("li");
-        emptyItem.className = "list-group-item text-muted";
-        emptyItem.textContent = "No friends yet";
-        currentFriendsList.appendChild(emptyItem);
-        return;
-    }
-
-    acceptedFriends.forEach((friendRow) => {
-        const listItem = document.createElement("li");
-        listItem.className = "list-group-item d-flex justify-content-between align-items-center";
-
-        const otherUsername = friendRow.user_id === currentUuid
-            ? friendRow.receiver_username
-            : friendRow.sender_username;
-
-        const usernameText = document.createElement("span");
-        usernameText.textContent = otherUsername;
-
-        const actionContainer = document.createElement("div");
-        actionContainer.className = "d-flex gap-2";
-
-        const messageButton = document.createElement("button");
-        messageButton.type = "button";
-        messageButton.className = "btn btn-primary btn-sm";
-        messageButton.textContent = "Message";
-        messageButton.dataset.action = "message";
-        messageButton.dataset.requestId = friendRow.id;
-
-        const targetUserUuid = friendRow.user_id === currentUuid ? friendRow.friend_id : friendRow.user_id;
-        messageButton.dataset.targetUserId = targetUserUuid;
-        messageButton.dataset.targetUsername = otherUsername;
-
-        const unfriendButton = document.createElement("button");
-        unfriendButton.type = "button";
-        unfriendButton.className = "btn btn-danger btn-sm";
-        unfriendButton.textContent = "Unfriend";
-        unfriendButton.dataset.action = "unfriend";
-        unfriendButton.dataset.requestId = friendRow.id;
-
-        actionContainer.appendChild(messageButton);
-        actionContainer.appendChild(unfriendButton);
-
-        listItem.appendChild(usernameText);
-        listItem.appendChild(actionContainer);
-        currentFriendsList.appendChild(listItem);
-    });
-}
-
-function displayChatFriends(acceptedFriends) {
-    const chatList = document.getElementById("chat-list");
-
-    if (!chatList) {
-        console.error("chat-list not found");
-        return;
-    }
-
-    chatList.textContent = "";
-
-    if (!acceptedFriends || acceptedFriends.length === 0) {
-        // no chats yet
-        return;
-    }
-
-    acceptedFriends.forEach((friendRow) => {
-        const listItem = document.createElement("li");
-        listItem.className = "list-group-item d-flex justify-content-between align-items-center current-chat";
-
-        const otherUsername = friendRow.user_id === currentUuid
-            ? friendRow.receiver_username
-            : friendRow.sender_username;
-
-        const infoWrapper = document.createElement("div");
-        infoWrapper.className = "d-flex align-items-center gap-2";
-
-        const friendIcon = document.createElement("div");
-        friendIcon.className = "friend-icon";
-        friendIcon.textContent = otherUsername[0].toUpperCase();
-
-        const usernameText = document.createElement("span");
-        usernameText.className = "current-chat-friends";
-        usernameText.textContent = otherUsername;
-
-        infoWrapper.appendChild(friendIcon);
-        infoWrapper.appendChild(usernameText);
-
-        const messageButton = document.createElement("button");
-        messageButton.type = "button";
-        messageButton.className = "btn btn-primary btn-sm";
-        messageButton.textContent = "Message";
-        messageButton.dataset.action = "message";
-        messageButton.dataset.requestId = friendRow.id;
-
-        const targetUserUuid = friendRow.user_id === currentUuid ? friendRow.friend_id : friendRow.user_id;
-        messageButton.dataset.targetUserId = targetUserUuid;
-        messageButton.dataset.targetUsername = otherUsername;
-
-        listItem.appendChild(infoWrapper);
-        listItem.appendChild(messageButton);
-        chatList.appendChild(listItem);
-    });
-}
-
 function searchChatFriends(searchTerm) {
     const normalized = searchTerm.trim().toLowerCase();
 
@@ -569,9 +351,9 @@ async function loadFriendRequests() {
             : requestRow.sender_username,
     }));
 
-    displayChatFriends(allChatFriends);
-    displayCurrentFriends(acceptedFriends);
-    displayFriendRequests(pendingRequests);
+    displayChatFriends(allChatFriends, currentUuid);
+    displayCurrentFriends(acceptedFriends, currentUuid);
+    displayFriendRequests(pendingRequests, currentUuid);
 }
 
 function getVisibleTabName() {
@@ -781,19 +563,24 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
     }
 
     if (action === "message") {
-        currentChatUuid = targetUserId;
-        currentChatUsername = targetUsername;
-        let messageId = [currentUuid, currentChatUuid].sort().join("_");
-        currentConversationUuid = messageId;
-
-        showChatPanel();
-
-        updateCurrentConversationHeader();
-        await subscribeToMessages(currentConversationUuid);
-        await loadMessage();
-        refreshFriendPresence();
-        return;
+        message(targetUserId, targetUsername);
     }
+}
+
+async function message(targetUserId, targetUsername) {
+    currentChatUuid = targetUserId;
+    currentChatUsername = targetUsername;
+
+    let messageId = [currentUuid, currentChatUuid].sort().join("_");
+    currentConversationUuid = messageId;
+
+    showChatPanel();
+
+    updateCurrentConversationHeader();
+    await subscribeToMessages(currentConversationUuid);
+    await loadMessage();
+    refreshFriendPresence();
+    return;
 }
 
 function bindFriendRequestButtons() {
@@ -914,10 +701,10 @@ function addLongPressListener(element) {
 
 
                 let { data: messages, error } = await supabaseClient
-                .from('messages')
-                .select('type,file_name,storage_path')
-                .eq('id',messageId)
-                .single()
+                    .from('messages')
+                    .select('type,file_name,storage_path')
+                    .eq('id', messageId)
+                    .single()
 
                 element.remove();
 
@@ -938,7 +725,7 @@ function addLongPressListener(element) {
                 if (deleteError) {
                     console.error("Error deleting message row:", deleteError.message);
                 }
-                
+
             }
         }, 1500);
     };
@@ -1019,7 +806,7 @@ async function loadMessage() {
             div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3");
 
             const timeMessage = document.createElement("p");
-            timeMessage.classList.add("mb-0", "text-nowrap");
+            timeMessage.classList.add("mb-0", "text-nowrap", "time-hover");
             const phTime = new Intl.DateTimeFormat("en-PH", {
                 timeZone: "Asia/Manila",
                 dateStyle: "medium",
@@ -1027,12 +814,18 @@ async function loadMessage() {
             }).format(new Date(msg.created_at));
 
             timeMessage.textContent = phTime;
+            timeMessage.style.opacity = 0;
+            timeMessage.style.color = "#a6abb1";
+            timeMessage.style.fontSize = "13px"
 
             if (msg.type === "text") {
 
                 const message = document.createElement("p");
-                message.classList.add("mb-0", "bg-primary", "p-1");
+                message.classList.add("mb-0", msg.sender_id === currentUuid ? "bg-primary" : "some-class", "p-2");
                 message.style.borderRadius = "5px";
+                if (msg.sender_id !== currentUuid) {
+                    message.style.backgroundColor = "#4d4d4d";
+                }
                 message.style.whiteSpace = "pre-wrap";
                 message.style.wordBreak = "break-word";
                 message.style.maxWidth = "90%";
@@ -1056,7 +849,7 @@ async function loadMessage() {
             }
             else if (msg.type === "file") {
                 const link = document.createElement("p");
-                link.classList.add("mb-0", "bg-primary", "p-1");
+                link.classList.add("mb-0", "bg-primary", "p-2");
                 link.style.borderRadius = "5px";
                 link.style.maxWidth = "90%";
 
@@ -1155,43 +948,62 @@ let presenceChannel = null;
 
 function updateFriendStatus(isOnline) {
     const statusText = document.getElementById("friend-online-status");
+    const onlineIcon = document.getElementById("online-icon");
 
-    if(!statusText) {
+    if (!statusText) {
         return;
     }
+    if (!onlineIcon) {
+        return
+    }
 
-    statusText.textContent = isOnline ? "🟢 Currently Online" : " ⚪Currently Offline";
+    onlineIcon.style.height = "10px";
+    onlineIcon.style.width = "10px";
+    onlineIcon.style.borderRadius = '50%';
+    onlineIcon.style.marginRight = "3px";
+    onlineIcon.style.marginTop = "5px";
+
+    if (isOnline) {
+        statusText.textContent = "Currently Online";
+        onlineIcon.style.background = "green";
+        onlineIcon.style.border = "1px solid green";
+
+    } else {
+        statusText.textContent = "Currently Offline";
+        onlineIcon.style.background = "lightgray";
+        onlineIcon.style.border = "1px solid lightgray";
+    }
 }
 
 function refreshFriendPresence() {
-  if (!presenceChannel || !currentChatUuid) return;
+    if (!presenceChannel || !currentChatUuid) return;
 
-  const state = presenceChannel.presenceState();
-  const activeUsers = Object.values(state).flat();
+    const state = presenceChannel.presenceState();
+    const activeUsers = Object.values(state).flat();
 
-  const friendIsOnline = activeUsers.some((presence) => presence.user_id === currentChatUuid);
-  updateFriendStatus(friendIsOnline);
+    const friendIsOnline = activeUsers.some((presence) => presence.user_id === currentChatUuid);
+    updateFriendStatus(friendIsOnline);
 }
 
 async function subscribeToPresence() {
-  if (presenceChannel) {
-    await supabaseClient.removeChannel(presenceChannel);
-  }
+    if (presenceChannel) {
+        await supabaseClient.removeChannel(presenceChannel);
+    }
 
-  presenceChannel = supabaseClient
-    .channel("presence-lobby")
-    .on("presence", { event: "sync" }, () => {
-      refreshFriendPresence();
-    })
-    .subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await presenceChannel.track({
-          user_id: currentUuid,
-          username: currentChatUsername,
-          online_at: new Date().toISOString()
+    presenceChannel = supabaseClient
+        .channel("presence-lobby")
+        .on("presence", { event: "sync" }, () => {
+            refreshFriendPresence();
+        })
+        .subscribe(async (status) => {
+            if (status === "SUBSCRIBED") {
+                await presenceChannel.track({
+                    user_id: currentUuid,
+                    username: currentChatUsername,
+                    online_at: new Date().toISOString()
+                });
+            }
         });
-      }
-    });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1237,27 +1049,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         chatSearchInput.addEventListener("input", (event) => {
             const searchTerm = event.target.value;
             const results = searchChatFriends(searchTerm);
-            displayChatFriends(results);
+            displayChatFriends(results, currentUuid);
         });
     }
 
-    const fileInput = document.getElementById('message-files');
+    const fileButton = document.getElementById("btn-message-files");
+    const fileInput = document.getElementById("message-files");
+
+    fileButton.addEventListener("click", () => {
+        fileInput.click();
+    });
 
     fileInput.addEventListener('change', async function () {
         if (this.files.length === 0) return;
 
         const file = this.files[0];
         const maxUploadSize = 5 * 1024 * 1024;
+
         if (file.size > maxUploadSize) {
             alert("File is too large, must be less than 5mb");
             this.value = "";
             return;
         }
 
-        fileInput.disabled = true;
+        fileButton.disabled = true;
 
         await uploadFile(file);
-        fileInput.disabled = false;
+        fileButton.disabled = false;
         this.value = "";
     });
 

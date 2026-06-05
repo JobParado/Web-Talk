@@ -24,49 +24,6 @@
     <script type="module" src="./src/account/loginEmail.js"></script>
     <script type="module" src="./src/account/loginGoogle.js"></script>
     <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-        #btn-login-google {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-            color: #1f1f1f;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            padding: 0 12px;
-            height: 40px;
-            border: 1px solid #747775;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
-            box-sizing: border-box;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #btn-login-google .google-icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        #btn-login-google:active {
-            background-color: #ebf1fa;
-        }
-
-        #btn-login-google:focus-visible {
-            outline: none;
-            border-color: #0b57d0;
-            background-color: #f8fafd;
-        }
-    </style>
 </head>
 
 <body>
@@ -86,7 +43,7 @@
                 <span>Sign In</span>
             </h2>
             <p>Welcome back — Enter your credentials</p>
-
+ 
 
             <div class="mb-3">
                 <label for="username" class="form-label">Email</label>
@@ -96,7 +53,7 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control input-field" id="password" required>
             </div>
-            <div style="display: flex; gap: 10px; justify-content: start; margin-bottom: 20px; margin-top: 20px;">
+            <div id="toggle-password-login">
                 <input type="checkbox" class="checkbox" onclick="togglePassword()">
                 <label for="showPassword">Show Password</label>
             </div>
