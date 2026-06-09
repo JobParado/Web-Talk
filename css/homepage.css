@@ -28,6 +28,34 @@ body {
     cursor: default;
 }
 
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: whitesmoke; 
+}
+ 
+
+::-webkit-scrollbar-thumb {
+  background: gray; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: gray; 
+}
+
+.time-hover {
+    opacity: 0 !important;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.msg-container:hover .time-hover {
+    opacity: 1 !important;
+}
+
 .user-chat {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
@@ -35,7 +63,6 @@ body {
     display: flex;
     height: auto;
 }
-
 
 .nav-item {
     text-align: center;
@@ -142,6 +169,7 @@ body {
     width: 5%;
     margin-right: 10px;
     padding: 10px;
+    overflow-y: auto;
 }
 
 .middle {
@@ -150,6 +178,7 @@ body {
     flex-grow: 1;
     min-width: 0;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .sidebar-right {
@@ -243,7 +272,8 @@ a:hover {
 .tab-link.is-active {
     background-color: var(--button-bg-color);
     color: var(--paragraph-color) !important;
-    border-radius: 6px;
+    padding: 5px;
+    border-radius: 10px;
     box-shadow: 5px 5px var(--background-color);
 }
 
@@ -368,6 +398,10 @@ a:hover {
         overflow: visible;
     }
 
+    .sidebar-right {
+        height: 98vh;
+    }
+
     .sidebar-left,
     .middle,
     .sidebar-right {
@@ -385,7 +419,7 @@ a:hover {
         background-color: var(--button-bg-color);
         color: var(--paragraph-color) !important;
         border-radius: 6px;
-        width: 25vw;
+        width: 20vw;
         box-shadow: 5px 5px var(--background-color);
     }
 
@@ -394,97 +428,11 @@ a:hover {
         min-height: 180px;
     }
 
-    /* .sidebar-right {
-        height: 100dvh;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .sidebar-right .content-1 {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-    }
-
-    .sidebar-right .content-2 {
-        display: none;
-        flex: 1 1 auto;
-        min-height: 0;
-    }
-
-    .sidebar-right .content-2.is-visible {
-        display: flex;
-    }
-
-    .sidebar-right .chat-area {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .sidebar-right .chat-area::before {
-        content: "";
-        flex: 1 0 auto;
-    } */
-
     .tab-content[data-tab-content="settings"] {
         max-width: 100%;
     }
 
     .settings-logout {
         width: 100%;
-    }
-}
-
-#friend-request-list .list-group-item,
-#search-results .list-group-item,
-#current-friends-list .list-group-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    min-width: 0;
-}
-
-#friend-request-list .list-group-item>.btn,
-#search-results .list-group-item>.btn,
-#current-friends-list .list-group-item>.btn {
-    flex: 0 0 auto;
-    margin-left: 6px;
-}
-
-
-#friend-request-list .list-group-item,
-#search-results .list-group-item,
-#current-friends-list .list-group-item {
-    overflow: visible;
-}
-
-
-#friend-request-list .list-group-item *:first-child,
-#search-results .list-group-item *:first-child,
-#current-friends-list .list-group-item *:first-child {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-@media (max-width: 420px) {
-    #friend-request-list .list-group-item,
-    #search-results .list-group-item,
-    #current-friends-list .list-group-item {
-        align-items: flex-start;
-    }
-
-    #friend-request-list .list-group-item>.btn,
-    #search-results .list-group-item>.btn,
-    #current-friends-list .list-group-item>.btn {
-        margin-left: 0;
-        margin-top: 6px;
     }
 }

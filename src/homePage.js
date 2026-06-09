@@ -16,6 +16,8 @@ let currentConversationUuid = null;
 let allChatFriends = [];
 let isRefreshingUsernameViews = false;
 
+const mediaQuery = window.matchMedia("(max-width: 768px)");
+let isMobile = false;
 
 function getUsernameFromEmail(email) {
     if (!email) return "new_user";
@@ -424,6 +426,9 @@ const closeChatBtn = document.getElementById("btn-close-chat");
 
 closeChatBtn.addEventListener("click", (event) => {
     showEmptyChatPanel();
+    if(isMobile) {
+        backButtonMobile();
+    }
 });
 
 function showEmptyChatPanel() {
@@ -580,6 +585,10 @@ async function message(targetUserId, targetUsername) {
     await subscribeToMessages(currentConversationUuid);
     await loadMessage();
     refreshFriendPresence();
+    
+    if(isMobile) {
+        showChatsMobile();
+    }
     return;
 }
 
@@ -803,107 +812,121 @@ async function loadMessage() {
                 addLongPressListener(div);
             }
 
-            div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3");
+            div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3","msg-container");
 
             const timeMessage = document.createElement("p");
             timeMessage.classList.add("mb-0", "text-nowrap", "time-hover");
-            const phTime = new Intl.DateTimeFormat("en-PH", {
-                timeZone: "Asia/Manila",
+
+            const userLocale = navigator.language || "en-PH"; 
+
+            const localTime = new Intl.DateTimeFormat(userLocale, {
                 dateStyle: "medium",
                 timeStyle: "short",
             }).format(new Date(msg.created_at));
 
-            timeMessage.textContent = phTime;
-            timeMessage.style.opacity = 0;
+            timeMessage.textContent = localTime;
             timeMessage.style.color = "#a6abb1";
-            timeMessage.style.fontSize = "13px"
+            timeMessage.style.fontSize = "13px";
 
-            if (msg.type === "text") {
+            // added braces so the every element doenst conflict on my switch lol
+            switch(msg.type) {
+                case "text": {
+                    const message = document.createElement("p");
 
-                const message = document.createElement("p");
-                message.classList.add("mb-0", msg.sender_id === currentUuid ? "bg-primary" : "some-class", "p-2");
-                message.style.borderRadius = "5px";
-                if (msg.sender_id !== currentUuid) {
-                    message.style.backgroundColor = "#4d4d4d";
+                    message.classList.add("mb-0", msg.sender_id === currentUuid ? "bg-primary" : "some-class", "p-2");
+                    message.style.borderRadius = "5px";
+                    if (msg.sender_id !== currentUuid) {
+                        message.style.backgroundColor = "#4d4d4d";
+                    }
+                    message.style.whiteSpace = "pre-wrap";
+                    message.style.wordBreak = "break-word";
+                    message.style.maxWidth = "90%";
+                    message.textContent = msg.message;
+
+                    div.append(timeMessage, message);
+                    break;
                 }
-                message.style.whiteSpace = "pre-wrap";
-                message.style.wordBreak = "break-word";
-                message.style.maxWidth = "90%";
-                message.textContent = msg.message;
+                case "image": {
+                    const image = document.createElement("img");
 
-                div.append(timeMessage, message);
-            }
-            else if (msg.type === "image") {
-                const image = document.createElement("img");
-                image.src = `${msg.file_path}`;
-                image.style.borderRadius = "10px";
-                image.loading = "eager";
-                image.decoding = "async";
-                image.style.width = "200px";
-                image.addEventListener("load", () => {
-                    scrollMessageContainerToBottom(messageContainer);
-                });
+                    image.src = `${msg.file_path}`;
+                    image.style.borderRadius = "10px";
+                    image.loading = "eager";
+                    image.decoding = "async";
+                    image.style.width = "200px";
+                    image.addEventListener("load", () => {
+                        scrollMessageContainerToBottom(messageContainer);
+                    });
 
-                div.append(timeMessage, image);
+                    div.append(timeMessage, image);
 
-            }
-            else if (msg.type === "file") {
-                const link = document.createElement("p");
-                link.classList.add("mb-0", "bg-primary", "p-2");
-                link.style.borderRadius = "5px";
-                link.style.maxWidth = "90%";
+                    break;
+                }
+                case "file": {
+                    const link = document.createElement("p");
 
-                const anchor = document.createElement("a");
-                anchor.style.color = "#DEE3E9";
-                anchor.href = msg.file_path;
-                anchor.textContent = msg.file_name;
-                anchor.target = "_blank";
-                link.append(anchor);
+                    link.classList.add("mb-0", "bg-primary", "p-2");
+                    link.style.borderRadius = "5px";
+                    link.style.maxWidth = "90%";
 
-                div.append(timeMessage, link);
+                    const anchor = document.createElement("a");
+                    anchor.style.color = "#DEE3E9";
+                    anchor.href = msg.file_path;
+                    anchor.textContent = msg.file_name;
+                    anchor.target = "_blank";
+                    link.append(anchor);
 
-            } else if (msg.type === "video") {
-                const video = document.createElement("video");
-                video.style.borderRadius = "10px";
-                video.style.width = "300px";
-                video.controls = true;
-                video.preload = "metadata";
-                video.addEventListener("loadedmetadata", () => {
-                    scrollMessageContainerToBottom(messageContainer);
-                });
+                    div.append(timeMessage, link);
+                    break;
+                }
+                case "video": {
+                    const video = document.createElement("video");
 
-                const source = document.createElement("source");
-                source.src = `${msg.file_path}`;
-                source.type = "video/mp4";
+                    video.style.borderRadius = "10px";
+                    video.style.width = "300px";
+                    video.controls = true;
+                    video.preload = "metadata";
+                    video.addEventListener("loadedmetadata", () => {
+                        scrollMessageContainerToBottom(messageContainer);
+                    });
 
-                video.append(source);
-                div.append(timeMessage, video);
+                    const source = document.createElement("source");
+                    source.src = `${msg.file_path}`;
+                    source.type = "video/mp4";
 
-            } else if (msg.type === "audio") {
-                const audio = document.createElement("audio");
-                audio.controls = true;
-                audio.preload = "metadata";
-                audio.addEventListener("loadedmetadata", () => {
-                    scrollMessageContainerToBottom(messageContainer);
-                });
+                    video.append(source);
+                    div.append(timeMessage, video);
+                    break;
+                }
+                case "audio": {
+                    const audio = document.createElement("audio");
 
-                const source = document.createElement("source");
-                source.src = `${msg.file_path}`;
-                source.type = "audio/mpeg";
+                    audio.controls = true;
+                    audio.preload = "metadata";
+                    audio.addEventListener("loadedmetadata", () => {
+                        scrollMessageContainerToBottom(messageContainer);
+                    });
 
-                audio.append(source);
-                div.append(timeMessage, audio);
+                    const source = document.createElement("source");
+                    source.src = `${msg.file_path}`;
+                    source.type = "audio/mpeg";
 
-            } else {
-                const message = document.createElement("p");
-                message.classList.add("mb-0", "bg-primary", "p-1");
-                message.style.borderRadius = "5px";
-                message.style.whiteSpace = "pre-wrap";
-                message.style.wordBreak = "break-word";
-                message.style.maxWidth = "90%";
-                message.textContent = "Error Message";
+                    audio.append(source);
+                    div.append(timeMessage, audio);
+                    break;
+                }
+                default: {
+                    const message = document.createElement("p");
 
-                div.append(timeMessage, message);
+                    message.classList.add("mb-0", "bg-primary", "p-1");
+                    message.style.borderRadius = "5px";
+                    message.style.whiteSpace = "pre-wrap";
+                    message.style.wordBreak = "break-word";
+                    message.style.maxWidth = "90%";
+                    message.textContent = "Error Message";
+
+                    div.append(timeMessage, message); 
+                }    
             }
 
             fragment.appendChild(div);
@@ -913,6 +936,48 @@ async function loadMessage() {
     }
 
 }
+
+function showChatsMobile() {
+    const middleContent = document.querySelector(".middle");
+    const sidebarLeft = document.querySelector(".sidebar-left");
+    const sidebarRight = document.querySelector(".sidebar-right");
+
+    if (middleContent) middleContent.style.display = "none";
+    if (sidebarLeft) sidebarLeft.style.display = "none";
+    if (sidebarRight) sidebarRight.style.display = "flex";
+}
+
+function backButtonMobile() {
+    const middleContent = document.querySelector(".middle");
+    const sidebarLeft = document.querySelector(".sidebar-left");
+    const sidebarRight = document.querySelector(".sidebar-right");
+
+    if (middleContent) middleContent.style.display = "";
+    if (sidebarLeft) sidebarLeft.style.display = "";
+    if (sidebarRight) sidebarRight.style.display = "";
+
+    const content2 = document.querySelector(".sidebar-right .content-2");
+    if (content2) content2.classList.remove("is-visible");
+}
+
+function handleDeviceChange(event) {
+    if (event.matches) {
+        isMobile = true;
+    } else {
+        isMobile = false;
+
+        const els = document.querySelectorAll(".middle, .sidebar-left, .sidebar-right");
+        els.forEach(el => {
+            el.style.display = "";
+        });
+
+        const content2 = document.querySelector(".sidebar-right .content-2");
+        const content1 = document.querySelector(".sidebar-right .content-1");
+        if (content2) content2.classList.remove("is-visible");
+        if (content1) content1.style.display = "";
+    }
+}
+
 
 let profilesChannel = null;
 let friendsChannel = null;
@@ -1008,6 +1073,9 @@ async function subscribeToPresence() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     const session = await checkUserSession();
+
+    handleDeviceChange(mediaQuery);
+    mediaQuery.addEventListener("change", handleDeviceChange);
 
     if (session) {
         await createProfileRow(session);
