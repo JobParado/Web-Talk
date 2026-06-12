@@ -88,22 +88,42 @@ export function displayCurrentFriends(acceptedFriends, currentUuid) {
 
 	acceptedFriends.forEach((friendRow) => {
 		const listItem = document.createElement("li");
-		listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+		listItem.className = "list-group-item d-flex justify-content-between align-items-center current-friends";
 
 		const otherUsername = friendRow.user_id === currentUuid
 			? friendRow.receiver_username
 			: friendRow.sender_username;
 
+		const container = document.createElement("div");
+		container.className = "d-flex align-items-center gap-2"; 
+
+		const profileDiv = document.createElement("div");
+		profileDiv.className = "current-friend";
+
+		const friendListIcon = document.createElement("li");
+		friendListIcon.className = "bi bi-person-fill";
+		
+		profileDiv.appendChild(friendListIcon);
+
 		const usernameText = document.createElement("span");
 		usernameText.textContent = otherUsername;
+
+		container.appendChild(profileDiv);
+		container.appendChild(usernameText);
 
 		const actionContainer = document.createElement("div");
 		actionContainer.className = "d-flex gap-2";
 
 		const messageButton = document.createElement("button");
 		messageButton.type = "button";
-		messageButton.className = "btn btn-primary btn-sm";
-		messageButton.textContent = "Message";
+		messageButton.title = "message this friend";
+		messageButton.className = "btn btn-primary btn-sm message-btn";
+
+		const messsageIcon = document.createElement("li");
+		messsageIcon.classList = "bi bi-chat-dots";
+
+		messageButton.appendChild(messsageIcon);
+
 		messageButton.dataset.action = "message";
 		messageButton.dataset.requestId = friendRow.id;
 
@@ -113,15 +133,21 @@ export function displayCurrentFriends(acceptedFriends, currentUuid) {
 
 		const unfriendButton = document.createElement("button");
 		unfriendButton.type = "button";
-		unfriendButton.className = "btn btn-danger btn-sm";
-		unfriendButton.textContent = "Unfriend";
+		unfriendButton.title = "unfriend this friend";
+		unfriendButton.className = "btn btn-danger btn-sm unfriend-btn";
+
+		const unfriendIcon = document.createElement("li");
+		unfriendIcon.classList = "bi bi-person-dash";
+
+		unfriendButton.appendChild(unfriendIcon);
+
 		unfriendButton.dataset.action = "unfriend";
 		unfriendButton.dataset.requestId = friendRow.id;
 
 		actionContainer.appendChild(messageButton);
 		actionContainer.appendChild(unfriendButton);
 
-		listItem.appendChild(usernameText);
+		listItem.appendChild(container);
 		listItem.appendChild(actionContainer);
 		currentFriendsList.appendChild(listItem);
 	});
@@ -142,17 +168,30 @@ export function displaySearchResults(users, emptyMessage = "No users found") {
 		const emptyItem = document.createElement("li");
 		emptyItem.className = "list-group-item text-muted";
 		emptyItem.textContent = emptyMessage;
-
 		resultsContainer.appendChild(emptyItem);
 		return;
 	}
 
 	users.forEach((user) => {
 		const listItem = document.createElement("li");
-		listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+		listItem.className = "list-group-item d-flex justify-content-between align-items-center add-friends";
+
+		const wrapper = document.createElement("div");
+		wrapper.classList = "d-flex align-items-center gap-2";
+
+		const addFriendIcon = document.createElement("div");
+		addFriendIcon.classList = "add-friend";
+
+		const friendIcon = document.createElement("li");
+		friendIcon.classList = "bi bi-person-plus";
+
+		addFriendIcon.appendChild(friendIcon);
 
 		const usernameText = document.createElement("span");
 		usernameText.textContent = user.username;
+
+		wrapper.appendChild(addFriendIcon);
+		wrapper.appendChild(usernameText);
 
 		const addButton = document.createElement("button");
 		addButton.type = "button";
@@ -160,7 +199,7 @@ export function displaySearchResults(users, emptyMessage = "No users found") {
 		addButton.textContent = "Add Friend";
 		addButton.dataset.userId = user.id;
 
-		listItem.appendChild(usernameText);
+		listItem.appendChild(wrapper);
 		listItem.appendChild(addButton);
 		resultsContainer.appendChild(listItem);
 	});
@@ -180,14 +219,25 @@ export function displayFriendRequests(requests, currentUuid) {
 	if (!requests || requests.length === 0) {
 		const emptyItem = document.createElement("li");
 		emptyItem.className = "list-group-item text-muted";
-		emptyItem.textContent = "No incoming friend requests";
+		emptyItem.textContent = "No pending friend requests";
 		requestList.appendChild(emptyItem);
 		return;
 	}
 
 	requests.forEach((requestRow) => {
 		const listItem = document.createElement("li");
-		listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+		listItem.className = "list-group-item d-flex justify-content-between align-items-center friend-requests";
+
+		const wrapper = document.createElement("div");
+		wrapper.classList = "d-flex align-items-center gap-2";
+
+		const friendIcon = document.createElement("div");
+		friendIcon.classList = "incoming-request";
+
+		const friendListIcon = document.createElement("li");
+		friendListIcon.className = "bi bi-person-exclamation";
+
+		friendIcon.appendChild(friendListIcon);
 
 		const leftText = document.createElement("span");
 		const actionContainer = document.createElement("div");
@@ -198,11 +248,11 @@ export function displayFriendRequests(requests, currentUuid) {
 		const isPending = requestRow.status === "pending";
 
 		if (isSender && isPending) {
-			leftText.textContent = `To ${requestRow.receiver_username} (Pending)`;
+			leftText.textContent = `To : ${requestRow.receiver_username} (Pending)`;
 
 			const cancelButton = document.createElement("button");
 			cancelButton.type = "button";
-			cancelButton.className = "btn btn-outline-danger btn-sm";
+			cancelButton.className = "btn btn-danger btn-sm";
 			cancelButton.textContent = "Cancel";
 			cancelButton.dataset.requestId = requestRow.id;
 			cancelButton.dataset.action = "cancel";
@@ -211,7 +261,7 @@ export function displayFriendRequests(requests, currentUuid) {
 		}
 
 		if (isReceiver && isPending) {
-			leftText.textContent = `From ${requestRow.sender_username}`;
+			leftText.textContent = `From : ${requestRow.sender_username}`;
 
 			const acceptButton = document.createElement("button");
 			acceptButton.type = "button";
@@ -222,7 +272,7 @@ export function displayFriendRequests(requests, currentUuid) {
 
 			const declineButton = document.createElement("button");
 			declineButton.type = "button";
-			declineButton.className = "btn btn-outline-secondary btn-sm";
+			declineButton.className = "btn btn-danger btn-sm";
 			declineButton.textContent = "Decline";
 			declineButton.dataset.requestId = requestRow.id;
 			declineButton.dataset.action = "decline";
@@ -231,7 +281,10 @@ export function displayFriendRequests(requests, currentUuid) {
 			actionContainer.appendChild(declineButton);
 		}
 
-		listItem.appendChild(leftText);
+		wrapper.appendChild(friendIcon);
+		wrapper.appendChild(leftText);
+
+		listItem.appendChild(wrapper);
 		listItem.appendChild(actionContainer);
 		requestList.appendChild(listItem);
 	});

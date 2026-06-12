@@ -56,6 +56,14 @@ body {
     opacity: 1 !important;
 }
 
+#btn-close-chat{
+    background: none;
+}
+
+#btn-close-chat:hover {
+    background: #6c757d;
+}
+
 .user-chat {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
@@ -75,6 +83,13 @@ body {
     color: var(--subtitle-text-color);
 }
 
+.bold-text {
+    font-weight: bold;
+}
+
+.account-text {
+    font-weight: bold;
+}
 .friend-list-container {
     max-height: 740px;
     overflow-y: auto;
@@ -307,20 +322,6 @@ a:hover {
     gap: 14px;
 }
 
-.settings-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.settings-field input {
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
-    padding: 10px 14px;
-    background: #fff;
-    color: #111;
-}
 
 .settings-logout {
     width: fit-content;
@@ -333,19 +334,22 @@ a:hover {
 }
 
 /* Tablet */
-@media (max-width: 1725px) {
+@media (min-width: 769px) and (max-width: 1725px) {
     .my-container {
         padding: 12px;
     }
 
-    
-
     .sidebar-left {
-        width: 12%;
+        width: 90px; 
+    }
+
+    .middle {
+        flex: 2; 
     }
 
     .sidebar-right {
-        width: 56%;
+        flex: 2; 
+        width: auto; 
     }
 
     p {
@@ -353,60 +357,69 @@ a:hover {
     }
 
     label {
-        font-size: 1em;
+        font-size: 0.9em;
     }
-
 }
+
+
 
 /* Mobile */
 @media (max-width: 768px) {
     .sidebar-right {
+        height: 100%;
+        width: 100%;
         display: none;
     }
     
-    .middle {
-        order: 1;
+    .remove-br {
+        display: none;
     }
 
+    .middle {
+        order: 1;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+    }
     .sidebar-left {
+        height: auto;
         order: 2;
         min-height: auto;
         padding: 8px 4px;
         overflow-y: auto;
         display: flex;
         justify-content: space-evenly;
+        width: 100%;
+    }
+
+    #friend-name {
+        font-size: 1em;
+        font-weight: bold;
     }
 
     body {
-        overflow: auto;
+        overflow: hidden;
     }
 
     p {
-        font-size: 1em;
+        font-size: 0.9em;
     }
 
     label {
-        font-size: 1em;
+        font-size: 0.8em;
+    }
+
+    span {
+        font-size: 0.9em;
     }
 
     .my-container {
         flex-direction: column;
         padding: 10px;
         gap: 10px;
-        height: auto;
+        height: 100dvh;
         min-height: 100dvh;
-        overflow: visible;
-    }
-
-    .sidebar-right {
-        height: 98vh;
-    }
-
-    .sidebar-left,
-    .middle,
-    .sidebar-right {
-        width: 100%;
-        margin: 0;
+        overflow: hidden;
     }
 
     .sidebar-left .nav-link {
@@ -425,14 +438,22 @@ a:hover {
 
 
     .middle {
-        min-height: 180px;
+        min-height: 0;
+    }
+
+    .sidebar-right .content-1,
+    .sidebar-right .content-2 {
+        min-height: 0;
+        height: 100%;
+    }
+
+    .sidebar-right .chat-area {
+        min-height: 0;
+        overflow-y: auto;
     }
 
     .tab-content[data-tab-content="settings"] {
         max-width: 100%;
     }
 
-    .settings-logout {
-        width: 100%;
-    }
 }

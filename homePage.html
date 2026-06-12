@@ -62,7 +62,7 @@
         <div class="middle">
 
             <div class="tab-content is-visible" data-tab-content="chats">
-                <h3>Chats</h3>
+                <h3 class="bold-text">Chats</h3>
                 <p class="subtitle">Your conversations with friends</p>
                 <input id="chat-search-input" class="form-control current-chat-search" type="text" placeholder="Search Contacts"
                     aria-label="default input example" autocomplete="off">
@@ -102,7 +102,7 @@
 
             <div class="tab-content" data-tab-content="friends">
                 <div>
-                    <h3>Friends</h3>
+                    <h3 class="bold-text">Friends</h3>
                     <p class="subtitle">Manage your connections</p>
                     <p class="subtitle">Current Friends</p>
                     <div class="friend-list-container" id="friend-list-container2">
@@ -112,8 +112,10 @@
                     </div>
                 </div>
 
+                <hr>
+
                 <div class="friends-list-spacing-3">
-                    <p> Add New Friends</p>
+                    <p> Add Friends</p>
                     <input id="friends-search-input" class="form-control search-new-friends" type="text" placeholder="Search For Friends to add"
                         aria-label="default input example" autocomplete="off">
                     <div class="friend-list-container" id="friend-list-container3">
@@ -122,6 +124,8 @@
                         </ul>
                     </div>
                 </div>
+
+                <hr>
 
                 <div class="friends-list-spacing-3">
                     <p>Friend Requests</p>
@@ -136,26 +140,35 @@
 
             <div class="tab-content" data-tab-content="settings">
                 <div class="settings-panel">
-                    <h3>Account Information</h3>
 
-                    <div class="settings-field">
-                        <label for="email">Email:</label>
-                        <input type="text" value="example@gmail.com" id="email" readonly>
+                    <div class="account-field">
+                        <h3 class="bold-text">Account</h3>
+
+                        <label for="email" class="subtitle">Email</label>
+                        <input type="text" id="email" readonly class="input-field"><br><br>
+
+                        <label for="username" class="subtitle">Username</label>
+                        <input type="text" id="username" readonly autocomplete="off" class="input-field"><br><br>
+
+                        <button type="button" class="btn btn-primary" id="btn-change-username">Change Username</button>
+                        <button type="button" class="btn btn-outline-danger" disabled id="btn-discard-changes">Discard</button><br class="remove-br"><br class="remove-br">
+                        <button type="button" class="btn btn-success" disabled id="btn-apply-changes">Apply</button>
                     </div>
-                    <button type="button" class="btn btn-info" id="btn-contact-support">Contact Support</button>
-                    <button type="button" class="btn btn-danger" id="btn-request-deletion">Request Account
-                        Deletion</button>
 
-                    <div class="settings-field">
-                        <label for="username">Username:</label>
-                        <input type="text" value="example@gmail.com" id="username" readonly autocomplete="off">
-
+                    <div class="account-field">
+                        <h3 class="bold-text">Support</h3>
+                        <p class="subtitle">Need help? Send us a message.</p>
+                        <button type="button" class="btn btn-outline-info" id="btn-contact-support">Contact Support</button>
                     </div>
-                    <button type="button" class="btn btn-primary" id="btn-change-username">Change Username</button>
-                    <button type="button" class="btn btn-danger" disabled id="btn-discard-changes">Discard
-                        Changes</button>
-                    <button type="button" class="btn btn-success" disabled id="btn-apply-changes">Apply Changes</button>
-                    <button type="button" class="btn btn-secondary settings-logout" id="btn-logout">Log Out</button>
+
+                    <div class="account-field">
+                        <h3 class="bold-text">Danger zone</h3>
+                        <button type="button" class="btn btn-outline-danger" id="btn-request-deletion">Request Account Deletion</button><br><br>
+                        <div>
+                            <button type="button" class="btn btn-secondary settings-logout" id="btn-logout">Log Out</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -186,7 +199,9 @@
                         </div>
 
                     </div>
-                    <button type="button" class="btn btn-secondary" id="btn-close-chat">Close Chat</button>
+                    <button type="button" class="btn btn-secondary" id="btn-close-chat" title="Close Chat">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
 
                 <div class="chat-area flex-grow-1" id="message-container">
@@ -300,5 +315,4 @@
     </script>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script>
 </body>
-
 </html>

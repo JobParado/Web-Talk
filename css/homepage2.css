@@ -39,7 +39,22 @@ span {
     color: var(--text-primary);
 }
 
+.input-field {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+}
+.input-field:focus {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
 
+hr {
+    color: white;
+}
 
 .chat-text-area {
     background: var(--bg-elevated);
@@ -67,29 +82,49 @@ span {
 .current-chat {
     background-color: var(--background-color2);
 }
+.current-friends, .add-friends, .friend-requests {
+    background-color: var(--background-color2);
+    color: var(--text-primary);
+}
 .current-chat-friends {
     color: var(--paragraph-color);
 }
 .tap-to-open-chat {
     color: var(--paragraph-color2);
 }
-.friend-icon {
+.friend-icon, .current-friend, .add-friend, .incoming-request {
     height: 40px;
     width: 40px;
     background: var(--button-bg-color);
     border-radius: 50%;
 
-    /* centers the friend text */
+
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--paragraph-color);
 }
+
+.current-friend > li ,
+.message-btn > li,
+.unfriend-btn > li,
+.add-friend > li,
+.incoming-request > li
+    {
+        list-style-type: none;
+        font-size: 1.5em;
+    }
+
+
 .current-chat:hover {
     background: #383c42;
 }
 
-
+.account-field {
+    border: 1px solid rgb(92, 92, 92);
+    border-radius: 15px;
+    padding: 15px;
+}
 
 @media (max-width: 1725px) {
     .tap-to-open-chat {
