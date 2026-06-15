@@ -238,6 +238,8 @@ body {
 }
 .bottom-area {
     padding: 10px;
+    /* safe protocol for pwa web app view inset bottom */
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
 #user-message {
@@ -383,6 +385,8 @@ a:hover {
         order: 2;
         min-height: auto;
         padding: 8px 4px;
+        /* safe protocol for pwa web app view inset bottom *//* safe protocol for pwa web app view inset bottom */
+        padding-bottom: calc(8px + env(safe-area-inset-bottom));
         overflow-y: auto;
         display: flex;
         justify-content: space-evenly;
