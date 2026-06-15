@@ -420,6 +420,18 @@ function showChatPanel() {
     if (content2) {
         content2.classList.add("is-visible");
     }
+
+    // Force layout reflow so env(safe-area-inset-bottom) recalculates on PWA
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            const bottomArea = document.querySelector(".bottom-area");
+            if (bottomArea) {
+                bottomArea.style.paddingBottom = '';
+                void bottomArea.offsetHeight;
+                bottomArea.style.paddingBottom = 'calc(10px + env(safe-area-inset-bottom))';
+            }
+        });
+    });
 }
 
 const closeChatBtn = document.getElementById("btn-close-chat");
@@ -1072,6 +1084,16 @@ async function subscribeToPresence() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // safe-area timing bug — env() values aren't ready on cold launch
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.body.style.display = 'none';
+            // eslint-disable-next-line no-unused-expressions
+            document.body.offsetHeight; // force reflow
+            document.body.style.display = '';
+        });
+    });
+
     const session = await checkUserSession();
 
     handleDeviceChange(mediaQuery);
