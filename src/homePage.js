@@ -6,6 +6,7 @@ import {
     displayCurrentFriends,
     displayChatFriends
 } from "./fetchData/friendLists.js";
+import imageCompression from "browser-image-compression";
 
 const LOGIN_PAGE_URL = "/index.html";
 
@@ -438,7 +439,7 @@ const closeChatBtn = document.getElementById("btn-close-chat");
 
 closeChatBtn.addEventListener("click", (event) => {
     showEmptyChatPanel();
-    if(isMobile) {
+    if (isMobile) {
         backButtonMobile();
     }
 });
@@ -597,8 +598,8 @@ async function message(targetUserId, targetUsername) {
     await subscribeToMessages(currentConversationUuid);
     await loadMessage();
     refreshFriendPresence();
-    
-    if(isMobile) {
+
+    if (isMobile) {
         showChatsMobile();
     }
     return;
@@ -824,12 +825,12 @@ async function loadMessage() {
                 addLongPressListener(div);
             }
 
-            div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3","msg-container");
+            div.classList.add("d-flex", "flex-column", msg.sender_id === currentUuid ? "align-items-end" : "align-items-start", "mb-3", "msg-container");
 
             const timeMessage = document.createElement("p");
             timeMessage.classList.add("mb-0", "text-nowrap", "time-hover");
 
-            const userLocale = navigator.language || "en-PH"; 
+            const userLocale = navigator.language || "en-PH";
 
             const localTime = new Intl.DateTimeFormat(userLocale, {
                 dateStyle: "medium",
@@ -841,7 +842,7 @@ async function loadMessage() {
             timeMessage.style.fontSize = "13px";
 
             // added braces so the every element doenst conflict on my switch lol
-            switch(msg.type) {
+            switch (msg.type) {
                 case "text": {
                     const message = document.createElement("p");
 
@@ -865,7 +866,7 @@ async function loadMessage() {
                     image.style.borderRadius = "10px";
                     image.loading = "eager";
                     image.decoding = "async";
-                    image.style.width = "200px";
+                    image.style.width = "250px";
                     image.addEventListener("load", () => {
                         scrollMessageContainerToBottom(messageContainer);
                     });
@@ -904,7 +905,9 @@ async function loadMessage() {
 
                     const source = document.createElement("source");
                     source.src = `${msg.file_path}`;
-                    source.type = "video/mp4";
+
+                    // allows any videos to fetch such as .webm video  
+                    source.type = msg.mime_type || "video/mp4";
 
                     video.append(source);
                     div.append(timeMessage, video);
@@ -921,7 +924,9 @@ async function loadMessage() {
 
                     const source = document.createElement("source");
                     source.src = `${msg.file_path}`;
-                    source.type = "audio/mpeg";
+
+                    // allows any videos to fetch such as .ogg/.wav for audio
+                    source.type = msg.mime_type || "audio/mpeg";
 
                     audio.append(source);
                     div.append(timeMessage, audio);
@@ -937,8 +942,8 @@ async function loadMessage() {
                     message.style.maxWidth = "90%";
                     message.textContent = "Error Message";
 
-                    div.append(timeMessage, message); 
-                }    
+                    div.append(timeMessage, message);
+                }
             }
 
             fragment.appendChild(div);
@@ -1154,36 +1159,78 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (this.files.length === 0) return;
 
         const file = this.files[0];
-        const maxUploadSize = 5 * 1024 * 1024;
 
-        if (file.size > maxUploadSize) {
-            alert("File is too large, must be less than 5mb");
+        const fileName = file.name.toLowerCase();
+        const dangerousExtensions = ['.exe', '.bat', '.cmd', '.sh', '.msi', '.com', '.scr', '.vbs'];
+        const isDangerous = dangerousExtensions.some(ext => fileName.endsWith(ext));
+
+        if (isDangerous) {
+            alert("Executable and script files are not allowed");
             this.value = "";
             return;
         }
 
-        fileButton.disabled = true;
+        let customType = "file";
 
-        await uploadFile(file);
+        if (file.type.startsWith('image/')) {
+            customType = "image";
+        } else if (file.type.startsWith('video/')) {
+            customType = "video";
+        } else if (file.type.startsWith('audio/')) {
+            customType = "audio";
+        }
+
+        if (customType === "image") {
+            if (file.size > 20 * 1024 * 1024) {
+                alert("Image is too large! Maximum raw size allowed is 20MB.");
+                this.value = "";
+                return;
+            }
+
+            compressImage(file, customType);
+            return;
+        } else if (customType === "video") {
+            if (file.size > 25 * 1024 * 1024) {
+                alert("Video must be less than 25MB.");
+                this.value = "";
+                return;
+            }
+
+        } else {
+            if (file.size > 15 * 1024 * 1024) {
+                alert("File must be less than 15MB.");
+                this.value = "";
+                return;
+            }
+        }
+
+        fileButton.disabled = true;
+        await uploadFile(file, customType);
         fileButton.disabled = false;
         this.value = "";
     });
 
-    async function uploadFile(file) {
-        const fileName = file.name;
+    async function compressImage(file, customType) {
+
+        const options = {
+            maxSizeMB: 1,
+            useWebWorker: true,
+            maxIteration: 2
+        };
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+
+            uploadFile(compressedFile, customType)
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async function uploadFile(file, customType) {
+        const fileName = file.name.toLowerCase();
         const filePath = `uploads/${Date.now()}-${file.name}`;
 
-        let customType;
-
-        if (file.type.startsWith('image/')) {
-            customType = "image";
-        } else if (file.type === 'video/mp4') {
-            customType = "video";
-        } else if (file.type === 'audio/mpeg' || file.type === 'audio/mp3') {
-            customType = "audio";
-        } else {
-            customType = "file";
-        }
 
         const { data: uploadData, error: uploadError } = await supabaseClient.storage
             .from('chat_files')

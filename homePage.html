@@ -258,8 +258,9 @@
                             <button type="button" class="btn btn-primary" id="btn-message-files">
                                 <i class="bi bi-paperclip"></i>
                             </button>
-
-                            <input type="file" id="message-files" hidden>
+                            
+                            <!-- accept only supported message type -->
+                            <input type="file" id="message-files" hidden accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.rtf,.pages,.numbers,.key">
                                 
                             <textarea rows="2" class="form-control chat-text-area"  placeholder="Type a message..." aria-label="Message input" id="user-message" autocomplete="off"></textarea>
 
