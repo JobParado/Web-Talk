@@ -2,8 +2,6 @@
 
 A real-time, dark-themed web chat application built with vanilla JavaScript and Supabase. WebTalk lets users sign up, add friends, and exchange messages and media — all in a responsive three-panel layout that works on desktop, tablet, and mobile as a PWA.
 
-> **Live repo:** https://github.com/JobParado/Web-Talk
-
 ---
 
 ## Features
@@ -17,7 +15,6 @@ A real-time, dark-themed web chat application built with vanilla JavaScript and 
 - **Message deletion** — long-press (1.5 s) your own messages to delete them (removes file from storage too)
 - **Shimmer skeleton** — loading placeholders while the chat list fetches
 - **Progressive Web App** — service worker, web manifest, installable on Android & iOS
-- **Safe-area support** — `env(safe-area-inset-bottom)` keeps the input bar above iPhone home indicators
 
 ## Tech Stack
 
