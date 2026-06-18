@@ -1,113 +1,143 @@
 # WebTalk 💬
 
-A real-time web chat application built with vanilla JavaScript, Supabase, and Bootstrap. WebTalk lets users sign up, add friends, and exchange text messages and media files — all in a clean, dark-themed UI that works on desktop and mobile as a PWA.
+A real-time, dark-themed web chat application built with vanilla JavaScript and Supabase. WebTalk lets users sign up, add friends, and exchange messages and media — all in a responsive three-panel layout that works on desktop, tablet, and mobile as a PWA.
+
+> **Live repo:** https://github.com/JobParado/Web-Talk
+
+---
 
 ## Features
 
-- **Email & Google authentication** via Supabase Auth
-- **Real-time messaging** with text, images, video, audio, and file attachments
-- **Friend system** — send, accept, decline, and cancel friend requests; unfriend at any time
-- **Live presence** — see when a friend is online or offline
-- **Username management** — change your display name from the Settings tab
-- **Image compression** — client-side compression before upload keeps storage usage low
-- **Progressive Web App (PWA)** — installable on mobile with safe-area inset support
-- **Responsive layout** — three-column desktop view collapses to a mobile-friendly single-panel view
+- **Email & Google sign-in** via Supabase Auth, with email confirmation flow
+- **Real-time messaging** — text, images, video, audio, and document attachments
+- **Friend system** — search users, send/accept/decline/cancel friend requests, unfriend
+- **Live presence** — green/grey indicator shows when a friend is online
+- **Username management** — change your display name from the Settings tab (max 16 chars)
+- **Image compression** — client-side compression via `browser-image-compression` before upload
+- **Message deletion** — long-press (1.5 s) your own messages to delete them (removes file from storage too)
+- **Shimmer skeleton** — loading placeholders while the chat list fetches
+- **Progressive Web App** — service worker, web manifest, installable on Android & iOS
+- **Safe-area support** — `env(safe-area-inset-bottom)` keeps the input bar above iPhone home indicators
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | HTML, CSS, Vanilla JS (ES Modules) |
+| Frontend | HTML5, CSS3, Vanilla JS (ES Modules) |
 | UI Framework | Bootstrap 5 + Bootstrap Icons |
-| Backend / Database | [Supabase](https://supabase.com) (Postgres, Auth, Storage, Realtime) |
-| Build Tool | Vite |
-| Image Compression | `browser-image-compression` |
+| Backend / DB | [Supabase](https://supabase.com) — Postgres, Auth, Realtime, Storage |
+| Build Tool | [Vite](https://vitejs.dev) v8 (multi-page) |
+| Image Compression | [`browser-image-compression`](https://www.npmjs.com/package/browser-image-compression) |
 
 ## Project Structure
 
 ```
-├── index.html              # Login page
+├── index.html              # Sign-in page
 ├── create.html             # Registration page
-├── homePage.html           # Main app shell
+├── homePage.html           # Main app shell (Chats / Friends / Settings)
+├── vite.config.js          # Multi-page Vite config
+├── public/
+│   ├── sw.js               # Service worker (cache-first strategy)
+│   └── site.webmanifest    # PWA manifest
 ├── css/
-│   ├── LoginCreate.css     # Styles for auth pages
-│   ├── homepage.css        # Layout and responsive styles
-│   ├── homepage2.css       # Component-level dark-theme styles
-│   └── skeleton.css        # Shimmer loading skeleton
+│   ├── LoginCreate.css     # Auth page styles
+│   ├── homepage.css        # Layout, responsive breakpoints
+│   ├── homepage2.css       # Component dark-theme styles
+│   └── skeleton.css        # Shimmer loading animation
 └── src/
-    ├── homePage.js         # Core app logic (messaging, friends, presence)
+    ├── homePage.js         # Core app logic — messaging, friends, presence, file uploads
     ├── config/
     │   └── supabaseClient.js
     ├── account/
     │   ├── loginEmail.js
     │   ├── loginGoogle.js
     │   ├── registerEmail.js
-    │   └── account.js      # Username update, support, account deletion
+    │   └── account.js      # Username update, support messages, account deletion requests
     └── fetchData/
-        ├── fetchUsers.js
-        └── friendLists.js  # DOM rendering for friend/chat lists
+        ├── fetchUsers.js   # Fetch all users excluding self and already-connected
+        └── friendLists.js  # DOM renderers for chat list, friends list, search results, requests
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- A [Supabase](https://supabase.com) project with the following tables: `profiles`, `friends`, `messages`, `support`, `account deletion requests`
-- A Supabase storage bucket named `chat_files` (public read, authenticated write)
+- Node.js **≥ 20** (required by Vite 8 and Supabase JS)
+- A [Supabase](https://supabase.com) project
 
-### Setup
+### 1. Clone and install
 
-1. **Clone the repository**
+```bash
+git clone https://github.com/JobParado/Web-Talk.git
+cd Web-Talk
+npm install
+```
 
-   ```bash
-   git clone <your-repo-url>
-   cd webtalk
-   ```
+### 2. Set up environment variables
 
-2. **Install dependencies**
+Create a `.env` file at the project root (already in `.gitignore`):
 
-   ```bash
-   npm install
-   ```
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
 
-3. **Configure environment variables**
+### 3. Configure Supabase
 
-   Create a `.env` file at the project root:
+Create the following tables in your Supabase project:
 
-   ```env
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   ```
+| Table | Key columns |
+|---|---|
+| `profiles` | `id` (uuid, FK → auth.users), `email`, `username`, `status` (bool) |
+| `friends` | `id`, `user_id`, `friend_id`, `status` (`pending` / `accepted`) |
+| `messages` | `id`, `conversation_id`, `sender_id`, `receiver_id`, `message`, `type`, `file_path`, `file_name`, `storage_path` |
+| `support` | `user_id`, `user_email`, `message` |
+| `account deletion requests` | `user_id`, `user_email`, `message` |
 
-4. **Start the dev server**
+Also configure:
 
-   ```bash
-   npm run dev
-   ```
-
-### Supabase Setup
-
-Enable the following in your Supabase project:
-
-- **Auth providers**: Email (with email confirmation) and Google OAuth
-- **Realtime**: enabled on `profiles`, `friends`, and `messages` tables
-- **Row Level Security (RLS)**: users should only be able to read/write their own rows
+- **Auth providers** — Email (with confirmation) and Google OAuth
+- **Realtime** — enable on `profiles`, `friends`, and `messages`
+- **Storage bucket** — create `chat_files` (public read, authenticated write)
+- **Row Level Security** — users should only read/write their own rows
 
 > [!NOTE]
-> The app derives a default username from the user's email address on first login and creates a `profiles` row automatically.
+> On first login the app auto-creates a `profiles` row and derives the default username from the email address (the part before `@`).
 
-## File Uploads
+### 4. Run the dev server
 
-Supported attachment types:
+```bash
+npm run dev
+```
 
-- **Images** — compressed client-side before upload (max 20 MB raw)
-- **Video** — max 25 MB
-**Audio** — streamed via `<audio>` element
-- **Documents** — PDF, Word, Excel, PowerPoint, CSV, TXT, and more (max 15 MB)
+Vite opens `index.html` automatically. The three entry points are `index.html`, `create.html`, and `homePage.html`.
 
-Executable files (`.exe`, `.bat`, `.sh`, etc.) are blocked on the client side.
+### 5. Build for production
 
-## PWA Support
+```bash
+npm run build   # outputs to dist/
+npm run preview # preview the production build locally
+```
 
-WebTalk registers a service worker (`sw.js`) and includes a web manifest (`site.webmanifest`), making it installable on Android and iOS home screens. The layout uses `env(safe-area-inset-bottom)` to avoid content being obscured by device notches or home indicators.
+## File Upload Limits
+
+| Type | Max size | Notes |
+|---|---|---|
+| Images | 20 MB raw | Compressed to ≤ 1 MB before upload |
+| Video | 25 MB | Streamed via `<video>` element |
+| Audio | 15 MB | Streamed via `<audio>` element |
+| Documents | 15 MB | PDF, Word, Excel, PowerPoint, CSV, TXT, etc. |
+
+Executable files (`.exe`, `.bat`, `.cmd`, `.sh`, `.msi`, `.com`, `.scr`, `.vbs`) are blocked client-side before upload.
+
+## Responsive Layout
+
+| Breakpoint | Layout |
+|---|---|
+| ≥ 1726 px | Three-column: sidebar-left · middle · sidebar-right (70%) |
+| 769–1725 px | Tablet: compressed columns, fluid widths |
+| ≤ 768 px | Mobile: single-panel view; opening a chat slides to the message pane; close button returns to the list |
+
+## PWA
+
+The service worker (`public/sw.js`) uses a **network-first, cache-fallback** strategy and caches the three HTML shells plus icons. The cache is versioned (`webtalk-v3`) and stale caches are pruned on activation.
