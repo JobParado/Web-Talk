@@ -10,12 +10,12 @@ import imageCompression from "browser-image-compression";
 
 const LOGIN_PAGE_URL = "/index.html";
 
-let currentUuid = null;
-let currentChatUuid = null;
-let currentChatUsername = "";
-let currentConversationUuid = null;
-let allChatFriends = [];
-let isRefreshingUsernameViews = false;
+let currentUuid = null;                 // Your own logged-in user ID
+let currentChatUuid = null;             // The user ID of the person you are chatting with
+let currentChatUsername = "";           // The username of the person you are chatting with
+let currentConversationUuid = null;     // The unique ID of the active chat room/message thread
+let allChatFriends = [];                // List of all your confirmed friends
+let isRefreshingUsernameViews = false;  // True if the UI is currently updating usernames
 
 const mediaQuery = window.matchMedia("(max-width: 768px)");
 let isMobile = false;
@@ -561,9 +561,6 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
             .or(`user_id.eq.${currentUuid},friend_id.eq.${currentUuid}`)
             .select("id");
 
-        showEmptyChatPanel();
-
-
         if (error) {
             showPopUp(`Unfriend failed: ${error.message}`);
             return;
@@ -574,6 +571,7 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
             return;
         }
 
+        showEmptyChatPanel();
         showPopUp("Friend removed.");
         await loadFriendRequests();
         await loadUsers();
@@ -582,6 +580,28 @@ async function handleFriendRequestAction(action, requestId, targetUserId = null,
 
     if (action === "message") {
         message(targetUserId, targetUsername);
+    }
+}
+
+async function checkFriendStatus() {
+
+    if(!currentUuid || !currentChatUuid) return;
+
+    let { data: friends, error } = await supabaseClient
+    .from('friends')
+    .select('id, status')
+    
+    .or(`and(user_id.eq.${currentUuid},friend_id.eq.${currentChatUuid}),and(user_id.eq.${currentChatUuid},friend_id.eq.${currentUuid})`)
+    .maybeSingle();
+
+    if(error) {
+        console.error("Error checking friendship status:", error.message);
+        return;
+    }
+
+    if (!friends || friends.status !== "accepted") {
+        showPopUp("This chat is no longer available.");
+        showEmptyChatPanel();
     }
 }
 
@@ -703,11 +723,11 @@ async function sendMessage() {
 
         if (error) {
             console.error("Failed to send message: ", error.message);
-            alert("Message failed to send.");
+            showPopUp("Message failed to send.");
             return
         }
     } else {
-        alert("Please Enter a message");
+        showPopUp("Please Enter a message");
     }
 
 }
@@ -1165,7 +1185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const isDangerous = dangerousExtensions.some(ext => fileName.endsWith(ext));
 
         if (isDangerous) {
-            alert("Executable and script files are not allowed");
+            showPopUp("Executable and script files are not allowed");
             this.value = "";
             return;
         }
@@ -1182,7 +1202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (customType === "image") {
             if (file.size > 20 * 1024 * 1024) {
-                alert("Image is too large! Maximum raw size allowed is 20MB.");
+                showPopUp("Image is too large! Maximum raw size allowed is 20MB.");
                 this.value = "";
                 return;
             }
@@ -1191,14 +1211,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         } else if (customType === "video") {
             if (file.size > 25 * 1024 * 1024) {
-                alert("Video must be less than 25MB.");
+                showPopUp("Video must be less than 25MB.");
                 this.value = "";
                 return;
             }
 
         } else {
             if (file.size > 15 * 1024 * 1024) {
-                alert("File must be less than 15MB.");
+                showPopUp("File must be less than 15MB.");
                 this.value = "";
                 return;
             }
@@ -1241,7 +1261,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        alert("File Has Been Sent.");
+        showPopUp("File Has Been Sent.");
 
         const { data: publicData } = supabaseClient.storage
             .from('chat_files')
@@ -1308,7 +1328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             { event: "*", schema: "public", table: "friends" },
             async () => {
                 await loadFriendRequests();
-
+                await checkFriendStatus();
             }
         )
         .subscribe();
