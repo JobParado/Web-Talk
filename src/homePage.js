@@ -746,9 +746,7 @@ function addLongPressListener(element) {
                     .from('messages')
                     .select('type,file_name,storage_path')
                     .eq('id', messageId)
-                    .single()
-
-                element.remove();
+                    .single()               
 
                 if (error || !messages) {
                     console.error("Error loading message:", error?.message || "Message not found");
@@ -762,12 +760,14 @@ function addLongPressListener(element) {
                 const { error: deleteError } = await supabaseClient
                     .from('messages')
                     .delete()
-                    .eq('id', messageId);
+                    .eq('id', messageId)
+                    .eq("sender_id", currentUuid);
 
                 if (deleteError) {
                     console.error("Error deleting message row:", deleteError.message);
+                } else {
+                    element.remove();
                 }
-
             }
         }, 1500);
     };
@@ -823,7 +823,7 @@ async function loadMessage() {
 
     let { data: messages, error } = await supabaseClient
         .from('messages')
-        .select('id, created_at, sender_id, message, type ,file_path, file_name')
+        .select('id, created_at, sender_id, message, type, file_path, file_name, storage_path')
         .eq('conversation_id', currentConversationUuid)
         .order('created_at', { ascending: true })
 
@@ -835,6 +835,28 @@ async function loadMessage() {
         let messageContainer = document.getElementById("message-container");
         const fragment = document.createDocumentFragment();
 
+        const filePaths = messages
+            .filter(msg => msg.type !== "text" && msg.storage_path)
+            .map(msg => msg.storage_path);
+
+        let signedUrlMap = {};
+
+        if (filePaths.length > 0) {
+            const { data: signedUrls, error: signedError } = await supabaseClient
+                .storage
+                .from('chat_files')
+                .createSignedUrls(filePaths, 3600); // 1 hour expiration of temporary url of files
+
+            if (signedError) {
+                console.error("Failed to create signed URLs:", signedError.message);
+            } else {
+                signedUrls.forEach(item => {
+                    if (item.signedUrl) {
+                        signedUrlMap[item.path] = item.signedUrl;
+                    }
+                });
+            }
+        }
 
         messages.forEach((msg) => {
 
@@ -882,7 +904,7 @@ async function loadMessage() {
                 case "image": {
                     const image = document.createElement("img");
 
-                    image.src = `${msg.file_path}`;
+                    image.src = signedUrlMap[msg.storage_path] || "";
                     image.style.borderRadius = "10px";
                     image.loading = "eager";
                     image.decoding = "async";
@@ -904,7 +926,7 @@ async function loadMessage() {
 
                     const anchor = document.createElement("a");
                     anchor.style.color = "#DEE3E9";
-                    anchor.href = msg.file_path;
+                    anchor.href = signedUrlMap[msg.storage_path] || "#";
                     anchor.textContent = msg.file_name;
                     anchor.target = "_blank";
                     link.append(anchor);
@@ -924,7 +946,7 @@ async function loadMessage() {
                     });
 
                     const source = document.createElement("source");
-                    source.src = `${msg.file_path}`;
+                    source.src = signedUrlMap[msg.storage_path] || "";
 
                     // allows any videos to fetch such as .webm video  
                     source.type = msg.mime_type || "video/mp4";
@@ -943,7 +965,7 @@ async function loadMessage() {
                     });
 
                     const source = document.createElement("source");
-                    source.src = `${msg.file_path}`;
+                    source.src = signedUrlMap[msg.storage_path] || "";
 
                     // allows any videos to fetch such as .ogg/.wav for audio
                     source.type = msg.mime_type || "audio/mpeg";
@@ -1263,35 +1285,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         showPopUp("File Has Been Sent.");
 
-        const { data: publicData } = supabaseClient.storage
-            .from('chat_files')
-            .getPublicUrl(uploadData.path);
+        const { data, error: insertError } = await supabaseClient
+            .from('messages')
+            .insert([
+                {
+                    sender_id: currentUuid,
+                    receiver_id: currentChatUuid,
+                    conversation_id: currentConversationUuid,
+                    type: customType,
+                    file_name: fileName,
+                    storage_path: uploadData.path
+                },
+            ])
+            .select()
 
-        const file_path = publicData.publicUrl;
-
-        if (file_path.length > 0) {
-
-            const { data, error: insertError } = await supabaseClient
-                .from('messages')
-                .insert([
-                    {
-                        sender_id: currentUuid,
-                        receiver_id: currentChatUuid,
-                        conversation_id: currentConversationUuid,
-                        file_path: file_path,
-                        type: customType,
-                        file_name: fileName,
-                        storage_path: uploadData.path
-                    },
-                ])
-                .select()
-
-            if (insertError) {
-                console.error("Upload Error:", insert.message);
-            } else {
-
-            }
-
+        if (insertError) {
+            console.error("Upload Error:", insertError.message);
         }
     }
 
