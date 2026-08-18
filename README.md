@@ -107,20 +107,51 @@ npm run preview
 
 ## Supabase Setup
 
-Create the tables used by the app:
+WebTalk requires a Supabase project for authentication, database access, realtime updates, and file storage.
 
-- `profiles` (user profile data, includes `id`, `email`, `username`, `status`)
-- `friends` (friend relationships + request status)
-- `messages` (chat messages + file metadata)
-- `support` (contact/support messages)
-- `account deletion requests` (account deletion requests)
+### Database tables
 
-Also configure:
+Create the following tables:
 
-- Auth providers: Email + Google
-- Realtime on `profiles`, `friends`, and `messages`
-- Storage bucket: `chat_files`
-- Row Level Security policies for user-owned data
+* `profiles` — user profile information such as `id`, `email`, `username`, and `status`
+* `friends` — friendship relationships and friend request status
+* `messages` — chat messages and file metadata
+* `support` — contact and support messages
+* `account deletion requests` — requests to delete user accounts
+
+### Authentication
+
+Enable these authentication providers in the Supabase dashboard:
+
+* Email/password
+* Google
+
+### Realtime
+
+Enable Supabase Realtime for:
+
+* `profiles`
+* `friends`
+* `messages`
+
+This allows the application to receive live updates without repeatedly polling the database.
+
+### Storage
+
+Create a storage bucket named:
+
+```text
+chat_files
+```
+
+The application uses this bucket for uploaded images, videos, audio, and documents.
+
+### Security
+
+Enable Row Level Security (RLS) on user-owned tables and create policies that restrict users to data they are authorized to access.
+
+Do not commit the `.env` file or any secret credentials to the repository.
+
 
 ## Messaging and File Limits
 
