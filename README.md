@@ -1,16 +1,16 @@
 # WebTalk
 
-WebTalk is a real-time chat app built with vanilla JavaScript, Vite, and Supabase. It supports authentication, friend management, live presence, and media/file messaging in a responsive multi-panel interface.
+WebTalk is a real-time chat application built entirely with vanilla JavaScript, Vite, and Supabase — no frontend framework required. It handles authentication, friend management, live presence, and rich media messaging inside a responsive multi-panel interface.
 
 ## Highlights
 
-- Supabase Auth (email/password + Google)
-- Real-time chat updates with Supabase Realtime
-- Friend request workflow (send, accept, decline, cancel, unfriend)
-- Presence indicator for online/offline friends
-- File sharing (images, video, audio, documents)
-- Client-side image compression before upload
-- Installable PWA (manifest + service worker)
+- Supabase Auth (email/password + Google sign-in)
+- Real-time message delivery via Supabase Realtime
+- Full friend request workflow — send, accept, decline, cancel, unfriend
+- Live presence indicators showing who's online
+- Media sharing: images, video, audio, and documents
+- Client-side image compression before upload, to keep transfers fast
+- Installable as a PWA with offline-friendly caching
 
 ## Tech Stack
 
