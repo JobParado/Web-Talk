@@ -119,3 +119,9 @@ The app registers `/sw.js` and uses a network-first strategy with cache fallback
 | `npm run build` | Build production assets |
 | `npm run preview` | Preview production build locally |
 
+## Acknowledgments
+
+- [Supabase](https://supabase.com) — authentication, database, realtime, and storage backend
+- [Vite](https://vitejs.dev) — build tooling and dev server
+- [Bootstrap](https://getbootstrap.com) — UI components and icons
+- [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression) — client-side image compression before upload
