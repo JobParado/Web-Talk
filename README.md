@@ -12,6 +12,28 @@ WebTalk is a real-time chat application built entirely with vanilla JavaScript, 
 - Client-side image compression before upload, to keep transfers fast
 - Installable as a PWA with offline-friendly caching
 
+
+## Architecture
+
+WebTalk uses a client-driven architecture built around Supabase services:
+
+```text
+Browser
+   │
+   ├── Vanilla JavaScript + Vite
+   │
+   └── Supabase
+        ├── Auth       → user authentication
+        ├── Postgres   → profiles, friends, messages, support
+        ├── Realtime   → live messages, presence, friend updates
+        └── Storage    → chat media and documents
+```
+
+The frontend communicates directly with Supabase from the browser using the Supabase JavaScript client. Authentication controls access to user data, while Row Level Security policies enforce ownership and access rules at the database level.
+
+Media files are uploaded to Supabase Storage, while message records store the associated file metadata and storage path.
+
+
 ## Tech Stack
 
 | Layer | Technology |
