@@ -1,6 +1,6 @@
 # WebTalk
 
-WebTalk is a real-time chat application built entirely with vanilla JavaScript, Vite, and Supabase — no frontend framework required. It handles authentication, friend management, live presence, and rich media messaging inside a responsive multi-panel interface.
+WebTalk is a real-time chat application built with vanilla JavaScript, Vite, and Supabase — no frontend framework required. It handles authentication, friend management, live presence, and rich media messaging inside a responsive multi-panel interface.
 
 ## Highlights
 
@@ -9,9 +9,8 @@ WebTalk is a real-time chat application built entirely with vanilla JavaScript, 
 - Full friend request workflow — send, accept, decline, cancel, unfriend
 - Live presence indicators showing who's online
 - Media sharing: images, video, audio, and documents
-- Client-side image compression before upload, to keep transfers fast
+- Client-side image compression before upload
 - Installable as a PWA with offline-friendly caching
-
 
 ## Architecture
 
@@ -29,10 +28,7 @@ Browser
         └── Storage    → chat media and documents
 ```
 
-The frontend communicates directly with Supabase from the browser using the Supabase JavaScript client. Authentication controls access to user data, while Row Level Security policies enforce ownership and access rules at the database level.
-
-Media files are uploaded to Supabase Storage, while message records store the associated file metadata and storage path.
-
+The frontend communicates directly with Supabase from the browser. Authentication controls access to user data, while Row Level Security policies enforce ownership and access rules at the database level.
 
 ## Tech Stack
 
@@ -71,98 +67,61 @@ Media files are uploaded to Supabase Storage, while message records store the as
 - Node.js 20+
 - A Supabase project
 
-### 1. Install dependencies
+### Setup
 
 ```bash
+# Install dependencies
 npm install
-```
 
-### 2. Configure environment variables
+# Configure environment variables
+# Create a .env file in the project root:
+# VITE_SUPABASE_URL=https://your-project.supabase.co
+# VITE_SUPABASE_ANON_KEY=your-anon-key
 
-Create a `.env` file in the project root:
-
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 3. Run the app
-
-```bash
+# Run the app
 npm run dev
 ```
 
-Vite opens `index.html` by default. This project uses three entry pages:
-
-- `index.html` (login)
-- `create.html` (registration)
-- `homePage.html` (main app)
-
-### 4. Build for production
-
-```bash
-npm run build
-npm run preview
-```
+This project uses three entry pages: `index.html` (login), `create.html` (registration), and `homePage.html` (main app).
 
 ## Supabase Setup
 
-WebTalk requires a Supabase project for authentication, database access, realtime updates, and file storage.
+WebTalk requires a Supabase project for auth, database, realtime, and storage.
 
-### Database tables
+### Database Tables
 
-Create the following tables:
-
-* `profiles` — user profile information such as `id`, `email`, `username`, and `status`
-* `friends` — friendship relationships and friend request status
-* `messages` — chat messages and file metadata
-* `support` — contact and support messages
-* `account deletion requests` — requests to delete user accounts
+| Table | Purpose |
+| --- | --- |
+| `profiles` | User profile info (id, email, username, status) |
+| `friends` | Friendship relationships and request status |
+| `messages` | Chat messages and file metadata |
+| `support` | Contact and support messages |
+| `account deletion requests` | Account deletion requests |
 
 ### Authentication
 
-Enable these authentication providers in the Supabase dashboard:
-
-* Email/password
-* Google
+Enable **Email/password** and **Google** providers in the Supabase dashboard.
 
 ### Realtime
 
-Enable Supabase Realtime for:
-
-* `profiles`
-* `friends`
-* `messages`
-
-This allows the application to receive live updates without repeatedly polling the database.
+Enable Supabase Realtime for `profiles`, `friends`, and `messages`.
 
 ### Storage
 
-Create a storage bucket named:
-
-```text
-chat_files
-```
-
-The application uses this bucket for uploaded images, videos, audio, and documents.
+Create a storage bucket named `chat_files` for uploaded images, videos, audio, and documents.
 
 ### Security
 
-Enable Row Level Security (RLS) on user-owned tables and create policies that restrict users to data they are authorized to access.
+Enable Row Level Security (RLS) on user-owned tables. Do not commit `.env` or any secret credentials to the repository.
 
-Do not commit the `.env` file or any secret credentials to the repository.
+## File Limits
 
-
-## Messaging and File Limits
-
-- Images: max 20 MB raw input, compressed client-side before upload
-- Video: max 25 MB
-- Audio/documents/other files: max 15 MB
-- Blocked file extensions: `.exe`, `.bat`, `.cmd`, `.sh`, `.msi`, `.com`, `.scr`, `.vbs`
-
-## PWA Notes
-
-The app registers `/sw.js` and uses a network-first strategy with cache fallback. Cached assets are versioned with `webtalk-v3`, and old caches are removed during service worker activation.
+| Type | Limit |
+| --- | --- |
+| Images | 20 MB (compressed client-side before upload) |
+| Video | 25 MB |
+| Audio / Documents | 15 MB |
+| Blocked extensions | `.exe`, `.bat`, `.cmd`, `.sh`, `.msi`, `.com`, `.scr`, `.vbs` |
 
 ## Scripts
 
@@ -174,7 +133,7 @@ The app registers `/sw.js` and uses a network-first strategy with cache fallback
 
 ## Acknowledgments
 
-- [Supabase](https://supabase.com) — authentication, database, realtime, and storage backend
-- [Vite](https://vitejs.dev) — build tooling and dev server
-- [Bootstrap](https://getbootstrap.com) — UI components and icons
-- [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression) — client-side image compression before upload
+- [Supabase](https://supabase.com) — backend services
+- [Vite](https://vitejs.dev) — build tooling
+- [Bootstrap](https://getbootstrap.com) — UI components
+- [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression) — client-side compression
